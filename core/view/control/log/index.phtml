@@ -1,0 +1,19 @@
+<?php 
+$this->headLink()->appendStylesheet('/js/dgrid/css/skins/claro.css');
+?>
+<script>
+require(["dojo/store/JsonRest", "dgrid/OnDemandGrid", "dojo/domReady!"], 
+        function(JsonRestStore, OnDemandGrid) {
+    var logStore = new JsonRestStore({target: '<?php echo $this->url('control/log/store') ?>'});
+    var grid = new OnDemandGrid({
+        store       : logStore,
+        columns: {
+            timestamp        : "Date Time",
+            priorityName     : "Priority",
+            message      : "Message",
+        }
+    }, 'logGrid');
+    grid.startup();
+});
+</script>
+<div id="logGrid"></div>

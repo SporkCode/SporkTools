@@ -1,0 +1,25 @@
+<?php 
+use Zend\Json\Json;
+
+$this->headLink()->appendStylesheet('/js/src/dgrid/css/skins/claro.css');
+?>
+<div data-dojo-type="dijit/layout/AccordionContainer">
+<?php foreach ($serviceMapper->map() as $serviceManager => $services):?>
+<div data-dojo-type="dijit/layout/ContentPane" title="<?php echo $this->escapeHtml($serviceManager) ?>">
+<script>
+require(["dgrid/Grid", "dojo/domReady!"], function(Grid) {
+    var data = <?php echo Json::encode(array_values($services)) ?>;
+    var grid = new Grid({
+        columns: {
+            name        : "Name",
+            'class'     : "Class",
+            source      : "Source"
+        }
+    }, '<?php echo $this->escapeHtml($serviceManager) ?>Grid');
+    grid.renderArray(data);
+});
+</script>
+<div id="<?php echo $this->escapeHtml($serviceManager) ?>Grid"></div>
+</div>
+<?php endforeach; ?>
+</div>

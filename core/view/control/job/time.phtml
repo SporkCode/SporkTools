@@ -1,0 +1,189 @@
+<div id="tabContainer"></div>
+<div style="margin: .5em 0 0 0">
+    interval <input type="text" name="interval" id="interval" value=""> 
+    offset <input type="text" name="offset" id="offset" value="">
+</div>
+<div id="shortTab">
+    Every
+    <input type="text" id="shortInterval">
+    minuets, offset by
+    <input type="text" id="shortOffset">
+    minuets
+</div>
+
+<div id="dailyTab">
+    Every day at <input type="text" id="dailyOffset"> <span class="timezone"></span>
+</div>
+
+<div id="weeklyTab">
+    Every 
+    <select id="weeklyOffsetDay">
+        <option value="345600">Monday</option>
+        <option value="432000">Tuesday</option>
+        <option value="518400">Wednesday</option>
+        <option value="0">Thursday</option>
+        <option value="86400">Friday</option>
+        <option value="172800">Saturday</option>
+        <option value="259200">Sunday</option>
+    </select>
+    at
+    <input type="text" id="weeklyOffsetTime"> <span class="timezone"></span>
+</div>
+
+<div id="monthlyTab">
+    On the 
+    <select id="monthlyOffsetDay">
+        <option value="0">1st</option>
+        <option value="86400">2nd</option>
+        <option value="172800">3rd</option>
+        <option value="259200">4th</option>
+        <option value="345600">5th</option>
+        <option value="432000">6th</option>
+        <option value="518400">7th</option>
+        <option value="604800">8th</option>
+        <option value="691200">9th</option>
+        <option value="777600">10th</option>
+        <option value="864000">11th</option>
+        <option value="950400">12th</option>
+        <option value="1036800">13th</option>
+        <option value="1123200">14th</option>
+        <option value="1209600">15th</option>
+        <option value="1296000">16th</option>
+        <option value="1382400">17th</option>
+        <option value="1468800">18th</option>
+        <option value="1555200">19th</option>
+        <option value="1641600">20th</option>
+        <option value="1728000">21th</option>
+        <option value="1814400">22th</option>
+        <option value="1900800">23th</option>
+        <option value="1987200">24th</option>
+        <option value="2073600">25th</option>
+        <option value="2160000">26th</option>
+        <option value="2246400">27th</option>
+        <option value="2332800">28th</option>
+        <option value="2419200">29th</option>
+        <option value="2505600">30th</option>
+        <option value="2592000">31th</option>
+        <option value="2678400">32th</option>
+    </select>
+    of every month at
+    <input type="text" id="monthlyOffsetTime"> <span class="timezone"></span>
+</div>
+
+<script>
+require(['dojo/date', 'dojo/dom', 'dojo/query', 'dijit/form/NumberSpinner', 
+         'dijit/form/Select', 'dijit/form/TimeTextBox', 'dijit/layout/TabContainer',
+         'dijit/layout/ContentPane', 'dijit/layout/LayoutContainer', 'dojo/domReady!'], 
+        function(date, dom, query, NumberSpinner, 
+                Select, TimeTextBox, TabContainer,
+                ContentPane, LayoutContainer) {
+    // init misc.
+    var timezone = date.getTimezoneName(new Date());
+    query('span.timezone').addContent(timezone);
+    var intervalNode = dom.byId('interval');
+    var offsetNode = dom.byId('offset');
+
+    // init tabs
+    var shortTab = new ContentPane({title: 'Short Interval'}, 'shortTab');
+    var dailyTab = new ContentPane({title: 'Daily'}, 'dailyTab');
+    var weeklyTab = new ContentPane({title: 'Weekly'}, 'weeklyTab');
+    var monthlyTab = new ContentPane({title: 'Monthly'}, 'monthlyTab');
+
+    var tabContainer = new TabContainer({region: 'center', doLayout: false}, 'tabContainer');
+    tabContainer.addChild(shortTab);
+    tabContainer.addChild(dailyTab);
+    tabContainer.addChild(weeklyTab);
+    tabContainer.addChild(monthlyTab);
+
+    // Input widgets
+    
+    var shortInterval = new NumberSpinner({
+        value: 60,
+        constraints: {min: 1, max: 86399},
+        intermediateChanges: true}, 'shortInterval');
+
+    var shortOffset = new NumberSpinner({
+        value: 0,
+        constraints: {min: 0, max: 86399},
+        intermediateChanges: true}, 'shortOffset');
+
+    var dailyOffset = new TimeTextBox({value: 'T12:00'}, 'dailyOffset');
+
+    var weeklyOffsetDay = new Select({}, 'weeklyOffsetDay');
+
+    var weeklyOffsetTime = new TimeTextBox({value: 'T12:00'}, 'weeklyOffsetTime');
+
+    var monthlyOffsetDay = new Select({}, 'monthlyOffsetDay');
+
+    var monthlyOffsetTime = new TimeTextBox({value: 'T12:00'}, 'monthlyOffsetTime');
+
+    // Update functions
+    
+    var updateShort = function() {
+        var interval = shortInterval.get('value');
+        var offset = shortOffset.get('value');
+        if (isNaN(interval) || isNaN(offset)) {
+            intervalNode.value = '';
+            offsetNode.value = '';
+        } else {
+            intervalNode.value = interval * 60;
+            offsetNode.value = offset * 60;
+        }
+    };
+
+    var updateDaily = function() {
+        var time = dailyOffset.get('value');
+        if (null == time) {
+            intervalNode.value = '';
+            offsetNode.value = '';
+        } else {
+            var offset = time.getUTCHours() * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
+            intervalNode.value = '86400';
+            offsetNode.value = offset;
+        }
+    };
+
+    var updateWeekly = function() {
+        var day = + weeklyOffsetDay.get('value');
+        var time = weeklyOffsetTime.get('value');
+        if (null == time) {
+            intervalNode.value = '';
+            offsetNode.value = '';
+        } else {
+            var offset = day + (time.getUTCDate() - 1) * 86400 + time.getUTCHours() * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
+            intervalNode.value = '604800';
+            offsetNode.value = offset;
+        }
+    };
+
+    var updateMonthly = function() {
+        var day = + monthlyOffsetDay.get('value');
+        var time = monthlyOffsetTime.get('value');
+        if (null == time) {
+            intervalNode.value = '';
+            offsetNode.value = '';
+        } else {
+            var offset = day + (time.getUTCDate() - 1) * 86400 + time.getUTCHours() * 3600 + time.getUTCMinutes() * 60 + time.getUTCSeconds();
+            intervalNode.value = '2628000';
+            offsetNode.value = offset;
+        }
+    }
+
+    // Event bindings
+
+    shortInterval.on('change', updateShort);
+    shortOffset.on('change', updateShort);
+    dailyOffset.on('change', updateDaily);
+    weeklyOffsetDay.on('change', updateWeekly);
+    weeklyOffsetTime.on('change', updateWeekly);
+    monthlyOffsetDay.on('change', updateMonthly);
+    monthlyOffsetTime.on('change', updateMonthly);
+
+    shortTab.on('show', updateShort);
+    dailyTab.on('show', updateDaily);
+    weeklyTab.on('show', updateWeekly);
+    monthlyTab.on('show', updateMonthly);
+
+    updateShort();
+});
+</script>

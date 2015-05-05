@@ -1,0 +1,47 @@
+ul.navigation {
+    margin: 0;
+    border: 2px solid #7799BB;
+    border-radius: 8px;
+    padding: 0;
+    background-image: linear-gradient(to bottom, #99BBDD, #557799);
+    display: inline-block;
+    list-style: none;
+    
+    > li {
+        display: inline-block;
+        //border-width: 1px;
+        //border-style: none solid;
+        //border-color: #99BBDD #99BBDD #557799 #557799;
+    }    
+    
+    li {
+        position: relative;
+        padding: .25em 2ex;
+    
+        &:hover {
+            ul {
+                display: block;
+            }
+        }
+        
+        a {
+            color: #0000FF;
+            font-weight: bold;
+        }
+        
+        ul {
+            margin: .25em 0 0 0;
+            padding: 0;
+            list-style: none;
+            display: none;
+            position: absolute;
+            left: 0;
+            background-color: #7799BB;
+            z-index: 1000;
+            
+            li {
+                //padding: .25em 0;
+            }    
+        }
+    } 
+}

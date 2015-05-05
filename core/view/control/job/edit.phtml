@@ -1,0 +1,33 @@
+<form method="post">
+    <h3>Name:</h3>
+    <input type="text" name="name" value="<?php echo $this->escapeHtml($job->getName()) ?>" data-dojo-type="dijit/form/TextBox">
+    <h3>Tasks:</h3>
+    <ol id="tasks"></ol>
+    <button id="addTaskButton" type="button">Add Task</button><br>
+    <button type="submit">Save Job</button>
+</form>
+<script>
+require(["dojo/dnd/Source", "dojo/dom", "dojo/dom-construct", "dijit/form/Button", 
+         "dijit/form/Textarea", "dojo/domReady!"], 
+        function(DndSource, dom, domConstruct, Button, Textarea) {
+    var dnd = new DndSource('tasks', {singular: true, withHandles: true});
+    var addTask = function(code) {
+        code = undefined == code ? '' : code;
+        var li = domConstruct.create('li');
+        var taskTextarea = new Textarea({innerHTML: code, name: 'tasks[]', style: 'width: 80ex'});
+        domConstruct.place(taskTextarea.domNode, li);
+        var removeTaskButton = new Button({label: 'remove'});
+        removeTaskButton.on('click', function(event) {
+            domConstruct.destroy(this.domNode.parentNode);});
+        domConstruct.place(removeTaskButton.domNode, li);
+        domConstruct.place('<span class="dojoDndHandle">move</span>', li);
+        dnd.insertNodes(false, [li]);
+    };
+    var addTaskButton = new Button({}, dom.byId('addTaskButton'));
+    addTaskButton.on('click', function(event) {addTask();});
+    <?php foreach ($job->getTasks() as $task): ?>
+    addTask('<?php echo $this->escapeHtml($task->getCode()) ?>');
+    <?php endforeach; ?>
+    addTask();
+});
+</script>

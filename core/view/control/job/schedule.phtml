@@ -1,0 +1,93 @@
+<style>
+#dialogContent .dijitDialogPaneContentAreazzz {
+    width: 500px !important;
+    height: 300px !important;
+}
+</style>
+
+<form method="post">
+    <table>
+        <thead>
+            <tr>
+                <th>Interval (seconds)</th>
+                <th>Offset (seconds)</th>
+            </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+    </table>
+    <button type="button" id="addTimeButton">Add Time</button>
+    <br>
+    <button type="submit">Save Schedule</button>
+</form>
+
+<div style="display: none">
+    <div id="dialogContent">
+        <div class="dijitDialogPaneContentArea">
+            <?php echo $this->partial('/control/job/time.phtml')?>
+        </div>
+        <div class="dijitDialogPaneActionBar">
+                <button id="dialogOkButton">OK</button>
+                <button id="dialogCancelButton">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+require(["dojo/dom-construct", "dojo/query", "dijit/form/Button", "dijit/Dialog", "dojo/domReady!"], 
+        function(domConstruct, query, Button, Dialog) {
+    var addTime = function(interval, offset) {
+        if (undefined == interval) {
+            interval = '';
+        }
+        if (undefined == offset) {
+            offset = '';
+        }
+        var row = domConstruct.create('tr', {}, 'scheduleBody');
+        var cell1 = domConstruct.create('td', {}, row);
+        var intervalNode = domConstruct.create('input', {type: 'text', name: "intervals[]", value: interval}, cell1);
+        var cell2 = domConstruct.create('td', {}, row);
+        var offsetNode = domConstruct.create('input', {type: 'text', name: "offsets[]", value: offset}, cell2);
+        var cell3 = domConstruct.create('td', {}, row);
+        var timeCalcButton = new Button({
+            label: 'Calculate Time', 
+            type: "button",
+            intervalNode: intervalNode,
+            offsetNode: offsetNode});
+        domConstruct.place(timeCalcButton.domNode, cell3);
+        timeCalcButton.on('click', function(event) {
+            dialog.intervalNode.value = this.intervalNode.value;
+            dialog.offsetNode.value = this.offsetNode.value;
+            dialog.buttonOk.intervalNode = this.intervalNode;
+            dialog.buttonOk.offsetNode = this.offsetNode;
+            dialog.show();
+            var handle = dialog.buttonOk.on('click', function(event) {
+                this.intervalNode.value = dialog.intervalNode.value;
+                this.offsetNode.value = dialog.offsetNode.value;
+                handle.remove();
+                dialog.hide();
+            });
+        });
+        var deleteTimeButton = new Button({label: 'Delete', type: "button"});
+        deleteTimeButton.on('click', function(event) {
+            domConstruct.destroy(row);
+        });
+        domConstruct.place(deleteTimeButton.domNode, cell3);
+    }
+
+    var addTimeButton = new Button({}, 'addTimeButton');
+    addTimeButton.on('click', function(event) {addTime()});
+
+    var dialog = new Dialog({}, 'dialogContent');
+    dialog.intervalNode = query('input#interval', dialog.containerNode)[0];
+    dialog.offsetNode = query('input#offset', dialog.containerNode)[0];
+    dialog.buttonOk = new Button({}, 'dialogOkButton');
+    dialog.buttonCancel = new Button({}, 'dialogCancelButton');
+    dialog.buttonCancel.on('click', function(event) {dialog.hide();});
+
+    <?php foreach ($schedule as $time): ?>
+    addTime(<?php echo (int) $time[0] ?>, <?php echo (int) $time[1] ?>);
+    <?php endforeach; ?>
+    
+    addTime();
+});
+</script>

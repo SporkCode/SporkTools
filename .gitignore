@@ -1,0 +1,12 @@
+/autoload.php
+/.buildpath
+/.project
+/.settings/
+/config/*
+!/config/README
+/src/*
+!/src/README
+/test/*
+!/test/README
+/view/*
+!/view/README

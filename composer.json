@@ -1,0 +1,17 @@
+{
+	"name": "sporkcode/sporktools",
+	"description": "Zend Framework 2 application tools module",
+	"type": "library",
+	"keywords": ["PHP", "ZF2", "Spork", "SporkTools", "Tools", "Module"],
+	"homepage": "https://github.com/SporkCode/SporkTools",
+	"license": "MIT",
+	"authors": [{
+		"name": "Chris Schreiber",
+		"homepage": "http://sporkcode.com"}],
+	"support": {
+		"issues": "https://github.com/SporkCode/SporkTools/issues",
+		"source": "https://github.com/SporkCode/SporkTools"},
+	"require": {
+        "php": ">=5.3.0",
+        "zendframework/zendframework": ">=2.2.0",
+        "sporkcode/spork": "*"}}

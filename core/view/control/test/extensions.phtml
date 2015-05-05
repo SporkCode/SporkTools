@@ -1,0 +1,32 @@
+<style>
+dl.required dd.ok {
+	color: green;
+}
+
+dl.required dd.fail {
+	color: red;
+}
+</style>
+<?php 
+$requiredExtensions = array(
+	'imagick',
+)
+?>
+<h2>Required extension</h2>
+<dl class="required">
+<?php foreach ($requiredExtensions as $extension): ?>
+	<?php $loaded = extension_loaded($extension) ?>
+	<dt><?php echo $this->escapeHtml($extension) ?></dt>
+	<dd class="<?php echo $loaded ? 'ok' : 'fail'?>"><?php echo $loaded ? 'OK' : 'Not Found!' ?></dd>
+<?php endforeach; ?>
+</dl>
+<h2>All loaded extensions</h2>
+<ul>
+<?php
+$extensions = get_loaded_extensions();
+sort($extensions);
+?>
+<?php foreach ($extensions as $extension): ?>
+	<li><?php echo $this->escapeHtml($extension) ?></li>
+<?php endforeach; ?>
+</ul>

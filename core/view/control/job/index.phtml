@@ -1,0 +1,122 @@
+<?php 
+use Control\Core\Job\Feature\FeatureInterface;
+$this->headLink()->appendStylesheet('/js/dgrid/css/skins/claro.css');
+?>
+<style>
+.dgrid-row .report {
+    /*white-space: pre;*/
+}
+
+.dgrid-row .report div.error {
+    color: red;
+}
+
+.dgrid-row .report div.warning {
+    color: orange;
+}
+
+.dgrid-row .report span.datetime {
+    margin-right: 2ex;
+}
+
+.dgrid-row .report span.text {
+    font-weight: bold;
+}
+
+.dgrid-cell.field-id {
+    width: 15ex;
+}
+
+.dgrid-cell.field-last {
+    width: 30ex;
+}
+
+.dgrid-cell.field-next {
+    width: 30ex;
+}
+</style>
+
+<?php if ($manager->hasFeature(FeatureInterface::MANAGE_JOBS)): ?>
+<a href="<?php echo $this->url('control/job/edit') ?>">Create Job</a>
+<?php endif;?>
+
+<?php if ($manager->hasFeature(FeatureInterface::ENABLED)): ?>
+<script>
+require(["dojo/dom-style", "dojo/fx", "dojo/on", "dojo/query", "dojo/store/Memory", "dgrid/OnDemandGrid", "put-selector/put", "dojo/domReady!"], 
+        function(domStyle, fx, on, query, MemoryStore, OnDemandGrid, put) {
+    var expandedNode;
+    var store = new MemoryStore({data: <?php echo json_encode($jobs) ?>});
+    var grid = new OnDemandGrid({
+        store       : store,
+        columns: [
+            { field: 'id', label: ' ', renderCell: function(data, value, node, options) {
+                var container = put('div');
+                var button = put(container, 'button[type=button][value=' + value + ']', 'Run');
+                on(button, 'click', function(event) {
+                    event.stopPropagation();
+                    var href = '<?php echo $this->url('control/job/run', array('job' => '0000')) ?>'.replace(/0000/, this.value);
+                    document.location.href = href;
+                });
+                <?php if ($manager->hasFeature(FeatureInterface::MANAGE_JOBS)): ?>
+                var button = put(container, 'button[type=button][value=' + value + ']', 'Edit');
+                on(button, 'click', function(event) {
+                    event.stopPropagation();
+                    var href = '<?php echo $this->url('control/job/edit', array('job' => '0000')) ?>'.replace(/0000/, this.value);
+                    document.location.href = href;
+                });
+                <?php endif; ?>
+                <?php if ($manager->hasFeature(FeatureInterface::SCHEDULE)): ?>
+                var button = put(container, 'button[type=button][value=' + value + ']', 'Schedule');
+                on(button, 'click', function(event) {
+                    event.stopPropagation();
+                    var href = '<?php echo $this->url('control/job/schedule', array('job' => '0000')) ?>'.replace(/0000/, this.value);
+                    document.location.href = href;
+                });
+                <?php endif; ?>
+                <?php if ($manager->hasFeature(FeatureInterface::MANAGE_JOBS)): ?>
+                var button = put(container, 'button[type=button][value=' + value + ']', 'Delete');
+                on(button, 'click', function(event) {
+                    event.stopPropagation();
+                    var href = '<?php echo $this->url('control/job/delete', array('job' => '0000')) ?>'.replace(/0000/, this.value);
+                    document.location.href = href;
+                });                    
+                <?php endif; ?>
+                return container; 
+            }},
+            { field: 'name', label: 'Name'},
+            { field: 'last', label: 'Last Run'},
+            { field: 'next', label: 'Next Run'},
+            { field: 'schedule', label: 'Schedule'}
+        ],
+        renderRow: function(obj, options) {
+            var row = put("div.collapsed", OnDemandGrid.prototype.renderRow.apply(this, arguments));
+            var report = put(row, "div.report.dgrid-cell.dgrid-cell-padding[style=display:none]");
+            for (var i = 0; i < obj.messages.length; i++) {
+                var message = put(report, "div." + obj.messages[i].type);
+                put(message, "span.datetime", obj.messages[i].datetime);
+                put(message, "span.text", obj.messages[i].text);
+            }
+            return row;
+        }
+    }, 'jobGrid');
+    grid.on('.dgrid-row:click', function(event) {
+        var rowNode = grid.row(event).element,
+            reportNode = query('.report', rowNode)[0];
+        
+        query('.report', grid.bodyNode).forEach(function(node) {
+            if (domStyle.get(node, 'display') != 'none') {
+                fx.wipeOut({node: node}).play();
+            } else {
+                if (node == reportNode) {
+                    fx.wipeIn({node: node}).play();
+                }
+            }
+        });
+    });
+    grid.startup();
+});
+</script>
+<div id="jobGrid"></div>
+<?php else: ?>
+Jobs have not been configured
+<?php endif;?>

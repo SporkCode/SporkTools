@@ -1,0 +1,112 @@
+<style>
+h1.eventManager {
+    border-radius: 14px;
+    padding: .5em 1ex;
+    
+    color: #444444;
+    background-color: #CCCCCC;
+    
+    font-size: 200%;
+    line-height: 50%;
+}
+
+h1.eventManager .identifiers {
+    font-size: 50%;
+}
+
+ol.events {
+    padding: 0;
+    margin: 0;
+    
+    list-style-position: inside;
+
+    font-weight: 700;
+    font-size: 150%;
+}
+
+ol.events > li {
+    margin: .5em 0;
+    border-radius: 14px;
+    padding: .25em 1ex;
+    
+    color: #444444;
+    background-color: #CCCCCC;
+}
+
+ol.events > li > span.name {
+    display: inline-block;
+    margin: 2px 0;    
+    border-radius: 14px;
+    padding: 2px 1ex;
+    
+    color: #CCCCCC;
+    background-color: #444444;
+}
+
+ol.listeners {
+    padding-left: 8ex;
+    list-style-position: outside;
+    
+    font-weight: normal;
+    font-size: 66.6%;
+}
+
+ol.listeners > li {
+    margin: .25em 0;
+    border-radius: 14px;
+    border: 2px solid #CCCCCC;
+    padding: .25em 2ex;
+    
+    background-color: #EEEEEE;
+}
+
+ol.listeners > li span.class {
+    font-weight: bold;
+}
+
+ol.listeners > li dl dt,
+ol.listeners > li dl dd {
+    display: inline-block;
+    padding: 0 1ex 0 0;
+    margin: 0;
+    
+    color: #666666;
+}
+
+ol.listeners li dl dt:AFTER {
+    content: ': ';
+}
+
+ol.listeners li dl dt {
+    font-weight: 700;
+}
+</style>
+<?php $renderMap = function($map) use (&$renderMap) { ?>
+    <h1 class="eventManager"><?php echo $this->escapeHtml($map->getName())?> 
+        <span class="identifiers">(<?php echo $this->escapeHtml(implode(', ', $map->getIdentifiers())) ?>)</span></h1>
+    <ol class="events">
+    <?php foreach ($map->getEvents() as $event => $listeners): ?>
+        <li><span class="name"><?php echo $this->escapeHtml($event) ?></span>
+        <ol class="listeners">
+        <?php foreach ($listeners as $listener): ?>
+            <li>
+            <span class="class"><?php echo $this->escapeHtml($listener['class']) ?></span> ::
+                <span class="method"><?php echo $this->escapeHtml($listener['method']) ?>()</span>
+            <dl>
+                <dt class="priority">Priority</dt>
+                <dd class="priority"><?php echo $this->escapeHtml($listener['priority']) ?></dd>
+                <dt class="identifier">Identifier</dt>
+                <dd class="identifier"><?php echo $this->escapeHtml($listener['identifier'])?></dd>
+            </dl>
+            <?php
+            if (array_key_exists('eventMap', $listener)):
+                $renderMap($listener['eventMap']);
+            endif;
+            ?>
+            </li>
+        <?php endforeach; ?>
+        </ol>
+        </li>
+    <?php endforeach; ?>
+    </ol>
+<?php }; $renderMap($eventMap); ?>

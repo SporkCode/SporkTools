@@ -1,0 +1,33 @@
+ul.navigation {
+  margin: 0;
+  border: 2px solid #79b;
+  border-radius: 8px;
+  padding: 0;
+  background-image: linear-gradient(to bottom, #9bd, #579);
+  display: inline-block;
+  list-style: none;
+}
+ul.navigation > li {
+  display: inline-block;
+}
+ul.navigation li {
+  position: relative;
+  padding: 0.25em 2ex;
+}
+ul.navigation li:hover ul {
+  display: block;
+}
+ul.navigation li a {
+  color: #00f;
+  font-weight: bold;
+}
+ul.navigation li ul {
+  margin: 0.25em 0 0 0;
+  padding: 0;
+  list-style: none;
+  display: none;
+  position: absolute;
+  left: 0;
+  background-color: #79b;
+  z-index: 1000;
+}
