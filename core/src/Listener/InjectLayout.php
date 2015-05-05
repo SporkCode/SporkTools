@@ -19,7 +19,7 @@ class InjectLayout extends AbstractListenerAggregate
     }
     
     /**
-     * Wraps result view model in control model layout model. 
+     * Wraps result view model in sporktools model layout model. 
      * 
      * @param MvcEvent $event
      */
@@ -35,7 +35,7 @@ class InjectLayout extends AbstractListenerAggregate
         }
         
         $layout = new ViewModel();
-        $layout->setTemplate('control/layout');
+        $layout->setTemplate('sporktools/layout');
         $layout->addChild($result);
         $event->setResult($layout);
     }

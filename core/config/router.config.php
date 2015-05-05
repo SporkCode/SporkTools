@@ -10,10 +10,10 @@ return array(
     ),
     'router'        => array(
         'routes'        => array(
-            'control'       => array(
+            'sporktools'       => array(
                 'type'          => 'literal',
                 'options'       => array(
-                    'route'         => '/control',
+                    'route'         => '/sporktools',
                     'defaults'      => array(
                         'controller'    => 'SporkTools\Core\Controller\Index',
                         'action'        => 'index',

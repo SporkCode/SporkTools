@@ -54,6 +54,6 @@ class IndexController extends AbstractActionController
     
     public function styleAction()
     {
-        $this->response->setContent(file_get_contents(__DIR__ . '/../../static/control.css'));
+        $this->response->setContent(file_get_contents(__DIR__ . '/../../static/sporktools.css'));
     }
 }

@@ -41,7 +41,7 @@ class ControlFooter implements ListenerAggregateInterface
                 $role = $this->getRole($auth, $serviceManager);
                 if ($acl->inheritsRole($role, Acl::ROLE_ADMINISTRATOR)) {
                 	$footerViewModel = new ViewModel();
-                	$footerViewModel->setTemplate('control/footer');
+                	$footerViewModel->setTemplate('sporktools/footer');
                 	$footerViewModel->setCaptureTo('controlFooter');
                     $viewModel->addChild($footerViewModel);
                 }

@@ -2,15 +2,15 @@
 use Itt\Lib\Permissions\Acl;
 return array(
     'navigation' => array(
-        'control' => array(
+        'sporktools' => array(
             array(
                 'label'     => 'Jobs',
-                'route'     => 'control/job',
+                'route'     => 'sporktools/job',
                 'visible'   => false,
             ),
             array(
                 'label'     => 'Log',
-                'route'     => 'control/log',
+                'route'     => 'sporktools/log',
             ),
             array(
                 'label'     => 'Info',
@@ -18,15 +18,15 @@ return array(
                 'pages'     => array(
                     array(
                         'label'     => 'PHP',
-                        'route'     => 'control/info/php',
+                        'route'     => 'sporktools/info/php',
                     ),
                     array(
                         'label'     => 'Events',
-                        'route'     => 'control/events'
+                        'route'     => 'sporktools/events'
                     ),
                     array(
                         'label'     => 'Services',
-                        'route'     => 'control/services',
+                        'route'     => 'sporktools/services',
                     ),
                 )
             ),
@@ -36,15 +36,15 @@ return array(
                 'pages'     => array(
                     array(
                         'label'     => 'Error',
-                        'route'     => 'control/test/error',
+                        'route'     => 'sporktools/test/error',
                     ),
                     array(
                         'label'     => 'Exception',
-                        'route'     => 'control/test/exception',
+                        'route'     => 'sporktools/test/exception',
                     ),
                     array(
                         'label'     => 'PHP Extensions',
-                        'route'     => 'control/test/extensions',
+                        'route'     => 'sporktools/test/extensions',
                     ),
                 )
             ),
