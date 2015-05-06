@@ -1,0 +1,20 @@
+<?php
+return array(
+    'db' => array(
+        'driver' => 'Pdo_Mysql',
+        'database' => 'DATABASE',
+        'username' => 'USERNAME',
+        'password' => 'PASSWORD',
+    ),
+    'service_manager' => array(
+        'abstract_factories' => array(
+        ),
+        'aliases' => array(
+        ),
+        'factories' => array(
+            'db' => 'Zend\Db\Adapter\AdapterServiceFactory'
+        ),
+        'invokables' => array(
+        ),
+    ),
+);

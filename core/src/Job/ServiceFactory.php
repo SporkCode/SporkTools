@@ -6,7 +6,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ServiceFactory implements FactoryInterface
 {
-    const MANAGER = 'controlJobs';
+    const MANAGER = 'sporkToolsJobs';
     
     public function createService(ServiceLocatorInterface $serviceLocator)
     {

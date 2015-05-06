@@ -28,21 +28,22 @@ class IndexController extends AbstractActionController
     {
         ob_start();
         phpinfo();
-        //$info = ob_get_clean();
-        preg_match('`<style[^>]*>(.*)</style>.*<body[^>]*>(.*)</body>`is', ob_get_clean(), $matches);
-        $style = $matches[1];
-        $info = $matches[2];
-        
-        $style = trim($style);
-        $style = explode(PHP_EOL, $style);
-        foreach ($style as $index => $line) {
-            $style[$index] = '#phpinfo ' . $line;
+        $info = ob_get_clean();
+        if (preg_match('`<style[^>]*>(.*)</style>.*<body[^>]*>(.*)</body>`is', $info, $matches)) {
+            $style = $matches[1];
+            $info = $matches[2];
+            
+            $style = trim($style);
+            $style = explode(PHP_EOL, $style);
+            foreach ($style as $index => $line) {
+                $style[$index] = '#phpinfo ' . $line;
+            }
+            $style = implode(PHP_EOL, $style);
+        } else {
+            $style = '';
         }
-        $style = implode(PHP_EOL, $style);
         
         return array('style' => $style, 'info' => $info);
-        //$this->response->setContent(phpinfo());
-        //return $this->response;
     }
     
     public function servicesAction()

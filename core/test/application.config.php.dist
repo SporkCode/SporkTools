@@ -1,0 +1,16 @@
+<?php
+return $config = array(
+    'modules' => array(
+        'SporkTools',
+        'Spork',
+    ),
+    'module_listener_options' => array(
+        'module_paths' => array(
+            'SporkTools' => './',
+            'Spork' => 'PATH_TO_SPORK_LIBRARY',
+        ),
+        'config_static_paths' => array(
+            'core/test/config.php',
+        ),
+    ),
+);
