@@ -81,6 +81,9 @@ ol.listeners li dl dt {
     font-weight: 700;
 }
 </style>
+
+<?php echo $this->events($events); return ?>
+
 <?php $renderMap = function($map) use (&$renderMap) { ?>
     <h1 class="eventManager"><?php echo $this->escapeHtml($map->getName())?> 
         <span class="identifiers">(<?php echo $this->escapeHtml(implode(', ', $map->getIdentifiers())) ?>)</span></h1>

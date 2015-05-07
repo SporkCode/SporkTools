@@ -7,6 +7,8 @@ class IndexController extends AbstractActionController
 {
     public function eventsAction()
     {
+        return array('events', $this->getEventManager());
+        
         $mapper = new \SporkTools\Core\EventManager\Mapper("Application Events",
             $this->getEvent()->getApplication()->getEventManager());
         
