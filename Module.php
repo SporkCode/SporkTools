@@ -3,9 +3,9 @@ namespace SporkTools;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Itt\Lib\Permissions\Acl;
 use Zend\Stdlib\Glob;
 use SporkTools\Core\Listener;
+use SporkTools\Core\Access\AccessListener;
 
 class Module
 {
@@ -29,8 +29,7 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         
-        $eventManager->attachAggregate($serviceManager->get(self::LISTENER_PERMISSION));
-        $eventManager->attachAggregate(new Listener\ControlFooter());
+        $eventManager->attachAggregate(new AccessListener());
         $eventManager->attachAggregate(new Listener\InjectLayout());
         
         // $headLink = $serviceManager->get('viewHelperManager')->get('headLink');

@@ -12,7 +12,7 @@ class InjectLayout extends AbstractListenerAggregate
     {
         $sharedEvents = $events->getSharedManager();
         $sharedEvents->attach(
-            'Control', 
+            'SporkTools', 
             MvcEvent::EVENT_DISPATCH, 
             array($this, 'injectLayout'), 
             -99);

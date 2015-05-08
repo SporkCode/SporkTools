@@ -7,14 +7,15 @@ return array(
     ),
     'service_manager' => array(
         'aliases'       => array(
-            \SporkTools\Core\Listener\Permission::SERVICE_AUTHENTICATION    => 'auth',
-            \SporkTools\Core\Listener\Permission::SERVICE_PERMISSION        => 'acl',
         ),
         'invokables'    => array(
+            'sporktools-access' => 'SporkTools\Core\Access\DenyAccess',
         ),
         'factories'     => array(
-            \SporkTools\Core\Job\ServiceFactory::MANAGER        => '\SporkTools\Core\Job\ServiceFactory',
-            \SporkTools\Module::LISTENER_PERMISSION        => '\SporkTools\Core\Listener\Permission',
+            \SporkTools\Core\Job\ServiceFactory::MANAGER
+                    => '\SporkTools\Core\Job\ServiceFactory',
+            \SporkTools\Module::LISTENER_PERMISSION
+                    => '\SporkTools\Core\Listener\Permission',
         )
     ),
     'view_helpers'      => array(
@@ -38,6 +39,6 @@ return array(
         ),
     ),
     'control_permission'    => array(
-        'authentication_route'  => 'auth/login',
+        //'authentication_route'  => 'auth/login',
     )
 );
