@@ -13,6 +13,8 @@ use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Http\Response;
+use SporkTools\Core\Access\AccessFactory;
+use SporkTools\Core\Access\SporkTools\Core\Access;
 
 class AccessListenerTest extends TestCase
 {
@@ -44,7 +46,7 @@ class AccessListenerTest extends TestCase
     public function testAuthorizeAuthenticationNegative()
     {
         $listener = new AccessListener();
-        $access = new AllowAccess();
+        $access = new DenyAccess();
         $event = new MvcEvent();
         $application = $this->getMockApplication(false, $access);
         $event->setApplication($application);
@@ -59,7 +61,7 @@ class AccessListenerTest extends TestCase
     public function testAuthorizeAuthenticationNagativeRedirect()
     {
         $listener = new AccessListener();
-        $access = new AllowAccess();
+        $access = new DenyAccess();
         $access->setAuthenticateRedirect('foo');
         $event = new MvcEvent();
         $application = $this->getMockApplication(false, $access);
@@ -77,7 +79,7 @@ class AccessListenerTest extends TestCase
     public function testAuthorizeAuthenticationNagativeRedirectRoute()
     {
         $listener = new AccessListener();
-        $access = new AllowAccess();
+        $access = new DenyAccess();
         $access->setAuthenticateRedirect('foo', true);
         $event = new MvcEvent();
         $application = $this->getMockApplication(false, $access);
@@ -183,7 +185,8 @@ class AccessListenerTest extends TestCase
         
         if (null !== $access) {
             $access->setServices($services);
-            $services->setService(AbstractAccess::KEY, $access);
+            $access->setAuthenticationService($auth);
+            $services->setService(AccessFactory::SERVICE, $access);
         }
         
         $application = $this->getMockBuilder('Zend\Mvc\Application')

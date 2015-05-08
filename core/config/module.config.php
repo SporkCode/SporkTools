@@ -9,9 +9,9 @@ return array(
         'aliases'       => array(
         ),
         'invokables'    => array(
-            'sporktools-access' => 'SporkTools\Core\Access\DenyAccess',
         ),
         'factories'     => array(
+            'SporkToolsAccess' => 'SporkTools\Core\Access\AccessFactory',
             \SporkTools\Core\Job\ServiceFactory::MANAGER
                     => '\SporkTools\Core\Job\ServiceFactory',
             \SporkTools\Module::LISTENER_PERMISSION

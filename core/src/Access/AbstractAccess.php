@@ -1,19 +1,17 @@
 <?php
 namespace SporkTools\Core\Access;
 
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\ServiceManager\ServiceManagerAwareInterface;
 
-abstract class AbstractAccess implements FactoryInterface
+abstract class AbstractAccess
 {
-    const KEY = 'sporktools-access';
-    
     /**
      * @var \Zend\Authentication\AuthenticationServiceInterface
      */
-    protected $authenticationService = 'auth';
+    protected $authenticationService;
 
     protected $authenticateRedirect;
     
@@ -30,25 +28,11 @@ abstract class AbstractAccess implements FactoryInterface
 
     abstract public function isAuthorized();
     
-    public function createService(ServiceLocatorInterface $services)
-    {
-        $this->services = $services;
-        
-        $appConfig = $this->services->get('config');
-        $config = isset($appConfig[self::KEY])
-                ? (array) $appConfig[self::KEY] : array();
-        foreach ($config as $name => $value) {
-            $method = 'set' . $name;
-            if (method_exists($this, $method)) {
-                call_user_func_array(array($this, $method), (array) $value);
-            }
-        }
-        
-        return $this;
-    }
-    
     public function isAuthenticated()
     {
+        if (null === $this->authenticationService) {
+            return false;
+        }
         return $this->getAuthenticationService()->hasIdentity();
     }
     

@@ -62,22 +62,6 @@ class AbstractAccessTest extends TestCase
         $this->assertTrue($this->access->isAuthenticated());
     }
     
-    public function testCreateService()
-    {
-        $services = new ServiceManager();
-        $services->setService('config', array(
-            'sporktools-access' => array('authenticateRedirect' => '/foo/bar'),
-        ));
-        $services->setFactory('access', $this->access);
-        
-        /* @var $access \SporkTools\Core\Access\AbstractAccess */
-        $access = $services->get('access');
-        
-        $this->assertEquals($this->access, $access);
-        $this->assertEquals('/foo/bar', $access->getAuthenticateRedirect());
-        $this->assertEquals($services, $access->getServices());
-    }
-    
     protected function setUp()
     {
         parent::setUp();

@@ -39,8 +39,8 @@ class AccessListener extends AbstractListenerAggregate
     {
         $response = $event->getResponse();
         $services = $event->getApplication()->getServiceManager();
-        if ($services->has(AbstractAccess::KEY)) {
-            $authorize = $services->get(AbstractAccess::KEY);
+        if ($services->has(AccessFactory::SERVICE)) {
+            $authorize = $services->get(AccessFactory::SERVICE);
             if (!$authorize instanceof AbstractAccess) {
                 throw new \Exception('Authorize Service must implement of SporkTools\Core\Access\AbstractAccess');
             }
