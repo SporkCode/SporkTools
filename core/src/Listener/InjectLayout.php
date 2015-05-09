@@ -35,7 +35,7 @@ class InjectLayout extends AbstractListenerAggregate
         }
         
         $layout = new ViewModel();
-        $layout->setTemplate('sporktools/layout');
+        $layout->setTemplate('spork-tools/layout');
         $layout->addChild($result);
         $event->setResult($layout);
     }
