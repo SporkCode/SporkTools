@@ -86,7 +86,7 @@ class AccessListener extends AbstractListenerAggregate
             $access = $event->getApplication()->getServiceManager()->get(AccessFactory::SERVICE);
             if ($access->isAuthorized()) {
                 $viewModel = new ViewModel();
-                $viewModel->setTemplate('spork-tools/menu');
+                $viewModel->setTemplate('spork-tools/footer');
                 $event->getViewModel()->addChild($viewModel, 'sporkToolsMenu');
             }
         }
