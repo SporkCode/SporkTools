@@ -10,7 +10,7 @@ return array(
     ),
     'router'        => array(
         'routes'        => array(
-            'sporktools'       => array(
+            'spork-tools'       => array(
                 'type'          => 'literal',
                 'options'       => array(
                     'route'         => '/sporktools',
@@ -24,11 +24,11 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes'  => array(
-                    'action'        => array(
-                        'type'          => 'segment',
-                        'options'       => array(
-                            'route'         => '/:action',
-                        ),
+                    'default' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => '/:controller/:action'
+                        )
                     ),
                     'info'          => array(
                         'type'          => 'literal',

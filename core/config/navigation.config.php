@@ -5,12 +5,12 @@ return array(
         'sporktools' => array(
             array(
                 'label'     => 'Jobs',
-                'route'     => 'sporktools/job',
+                'route'     => 'spork-tools/job',
                 'visible'   => false,
             ),
             array(
                 'label'     => 'Log',
-                'route'     => 'sporktools/log',
+                'route'     => 'spork-tools/log',
             ),
             array(
                 'label'     => 'Info',
@@ -18,15 +18,15 @@ return array(
                 'pages'     => array(
                     array(
                         'label'     => 'PHP',
-                        'route'     => 'sporktools/info/php',
+                        'route'     => 'spork-tools/info/php',
                     ),
                     array(
                         'label'     => 'Events',
-                        'route'     => 'sporktools/events'
+                        'route'     => 'spork-tools/events'
                     ),
                     array(
                         'label'     => 'Services',
-                        'route'     => 'sporktools/services',
+                        'route'     => 'spork-tools/services',
                     ),
                 )
             ),
@@ -36,15 +36,15 @@ return array(
                 'pages'     => array(
                     array(
                         'label'     => 'Error',
-                        'route'     => 'sporktools/test/error',
+                        'route'     => 'spork-tools/test/error',
                     ),
                     array(
                         'label'     => 'Exception',
-                        'route'     => 'sporktools/test/exception',
+                        'route'     => 'spork-tools/test/exception',
                     ),
                     array(
                         'label'     => 'PHP Extensions',
-                        'route'     => 'sporktools/test/extensions',
+                        'route'     => 'spork-tools/test/extensions',
                     ),
                 )
             ),
