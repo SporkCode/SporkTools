@@ -59,7 +59,7 @@ class JobController extends AbstractActionController
             }
             $job->setTasks($tasks);
             $job->save();
-            return $this->redirect()->toRoute('sporktools/job');
+            return $this->redirect()->toRoute('spork-tools/job');
         }
         
         return array('job' => $job);
@@ -83,7 +83,7 @@ class JobController extends AbstractActionController
             }
             $job->setSchedule($schedule);
             $job->save();
-            return $this->redirect()->toRoute('sporktools/job');
+            return $this->redirect()->toRoute('spork-tools/job');
         }
         
         $schedule = $job->getSchedule();
@@ -105,7 +105,7 @@ class JobController extends AbstractActionController
     {
         $job = $this->getJobManager()->getJob($this->params('job'));
         $job->delete();
-        return $this->redirect()->toRoute('sporktools/job');
+        return $this->redirect()->toRoute('spork-tools/job');
     }
     
     /**

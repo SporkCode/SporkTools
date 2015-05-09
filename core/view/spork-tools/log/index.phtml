@@ -4,7 +4,7 @@ $this->headLink()->appendStylesheet('/js/dgrid/css/skins/claro.css');
 <script>
 require(["dojo/store/JsonRest", "dgrid/OnDemandGrid", "dojo/domReady!"], 
         function(JsonRestStore, OnDemandGrid) {
-    var logStore = new JsonRestStore({target: '<?php echo $this->url('sporktools/log/store') ?>'});
+    var logStore = new JsonRestStore({target: '<?php echo $this->url('spork-tools/log/store') ?>'});
     var grid = new OnDemandGrid({
         store       : logStore,
         columns: {
