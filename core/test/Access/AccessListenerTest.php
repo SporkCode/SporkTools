@@ -2,19 +2,18 @@
 namespace SporkToolsTest\Access;
 
 use Spork\Test\TestCase\TestCase;
+use SporkTools\Core\Access\AccessFactory;
 use SporkTools\Core\Access\AccessListener;
-use SporkTools\Core\Access\AbstractAccess;
 use SporkTools\Core\Access\AllowAccess;
 use SporkTools\Core\Access\DenyAccess;
 use Zend\Authentication\AuthenticationService;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
+use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\ServiceManager;
-use Zend\Http\Response;
-use SporkTools\Core\Access\AccessFactory;
-use SporkTools\Core\Access\SporkTools\Core\Access;
+use Zend\View\Model\ViewModel;
 
 class AccessListenerTest extends TestCase
 {
@@ -155,6 +154,36 @@ class AccessListenerTest extends TestCase
     
         $this->assertInstanceOf('Zend\Http\Response', $response);
         $this->assertEquals(302, $response->getStatusCode());
+    }
+    
+    public function testInjectLayoutPositive()
+    {
+        $listener = new AccessListener();
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('layout/layout');
+        $access = new AllowAccess();
+        $event = new MvcEvent();
+        $event->setApplication($this->getMockApplication(true, $access));
+        $event->setViewModel($viewModel);
+        
+        $listener->injectLayoutMenu($event);
+        
+        $this->assertCount(1, $viewModel->getChildrenByCaptureTo('sporkToolsMenu'));
+    }
+
+    public function testInjectLayoutNegative()
+    {
+        $listener = new AccessListener();
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('layout/layout');
+        $access = new DenyAccess();
+        $event = new MvcEvent();
+        $event->setApplication($this->getMockApplication(true, $access));
+        $event->setViewModel($viewModel);
+    
+        $listener->injectLayoutMenu($event);
+    
+        $this->assertCount(0, $viewModel->getChildrenByCaptureTo('sporkToolsMenu'));
     }
     
     /**

@@ -80,11 +80,15 @@ class AccessListener extends AbstractListenerAggregate
     
     public function injectLayoutMenu(MvcEvent $event)
     {
-        $access = $event->getApplication()->getServiceManager()->get(AbstractAccess::KEY);
-        if ($access->isAuthorized()) {
-            $viewModel = new ViewModel();
-            $viewModel->setTemplate('spork-tools/menu');
-            $event->getViewModel()->addChild($viewModel, 'sporkToolsMenu');
+        $viewModel = $event->getViewModel();
+        if ($viewModel instanceof ViewModel 
+                && $viewModel->getTemplate() == 'layout/layout') {
+            $access = $event->getApplication()->getServiceManager()->get(AccessFactory::SERVICE);
+            if ($access->isAuthorized()) {
+                $viewModel = new ViewModel();
+                $viewModel->setTemplate('spork-tools/menu');
+                $event->getViewModel()->addChild($viewModel, 'sporkToolsMenu');
+            }
         }
     }
 }
