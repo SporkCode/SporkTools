@@ -4,7 +4,7 @@ namespace SporkToolsTest\View\Helper;
 use SporkTools\Core\Test\TestCaseService;
 use SporkTools\Core\View\Helper\Events;
 
-use Zend\EventManager\EventManager;
+use Zend\View\Renderer\PhpRenderer;
 
 class EventsTest extends TestCaseService
 {
@@ -13,7 +13,7 @@ class EventsTest extends TestCaseService
         $application = $this->services->get('application');
         $application->bootstrap();
         $events = new Events();
-        $events->setView($this->services->get('viewRenderer'));
+        $events->setView(new PhpRenderer());
         
         $eventManager = $application->getEventManager();
         $events($eventManager);

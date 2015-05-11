@@ -2,11 +2,11 @@
 namespace SporkToolsTest\Access;
 
 use Spork\Test\TestCase\TestCase;
-use SporkTools\Core\Access\AccessFactory;
+use SporkTools\Core\Access\ServiceFactory;
 
 use Zend\ServiceManager\ServiceManager;
 
-class AccessFactoryTest extends TestCase
+class ServiceFactoryTest extends TestCase
 {
     
     public function testCreateService()
@@ -15,7 +15,7 @@ class AccessFactoryTest extends TestCase
         $services->setService('config', array(
             'sporktools-access' => array('authenticateRedirect' => '/foo/bar'),
         ));
-        $services->setFactory('access', new AccessFactory());
+        $services->setFactory('access', new ServiceFactory());
         
         /* @var $access \SporkTools\Core\Access\AbstractAccess */
         $access = $services->get('access');

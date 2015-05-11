@@ -2,7 +2,7 @@
 namespace SporkToolsTest\Access;
 
 use Spork\Test\TestCase\TestCase;
-use SporkTools\Core\Access\AccessFactory;
+use SporkTools\Core\Access\ServiceFactory;
 use SporkTools\Core\Access\AccessListener;
 use SporkTools\Core\Access\AllowAccess;
 use SporkTools\Core\Access\DenyAccess;
@@ -215,7 +215,7 @@ class AccessListenerTest extends TestCase
         if (null !== $access) {
             $access->setServices($services);
             $access->setAuthenticationService($auth);
-            $services->setService(AccessFactory::SERVICE, $access);
+            $services->setService(ServiceFactory::SERVICE, $access);
         }
         
         $application = $this->getMockBuilder('Zend\Mvc\Application')

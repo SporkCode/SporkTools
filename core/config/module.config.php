@@ -1,4 +1,6 @@
 <?php
+use SporkTools\Core\Access\ServiceFactory as AccessServiceFactory;
+use SporkTools\Core\Job\ServiceFactory as JobServiceFactory;
 
 return array(
     'controller_plugins' => array(
@@ -11,34 +13,18 @@ return array(
         'invokables'    => array(
         ),
         'factories'     => array(
-            'SporkToolsAccess' => 'SporkTools\Core\Access\AccessFactory',
-            \SporkTools\Core\Job\ServiceFactory::MANAGER
-                    => '\SporkTools\Core\Job\ServiceFactory',
-            \SporkTools\Module::LISTENER_PERMISSION
-                    => '\SporkTools\Core\Listener\Permission',
+            AccessServiceFactory::SERVICE => 'SporkTools\Core\Access\ServiceFactory',
+            JobServiceFactory::MANAGER => '\SporkTools\Core\Job\ServiceFactory',
         )
     ),
     'view_helpers'      => array(
         'invokables'        => array(
-            //'dojomenu'          => 'SporkTools\Core\View\Helper\Naviation\DojoMenu',
         ),
     ),
     'view_manager' => array(
-        'template_map' => array(
-        ),
         'template_path_stack' => array(
-            __DIR__ . '/../view'
-        ),
-        'strategies' => array(
-        ),
-    ),
-    // Placeholder for console routes
-    'console' => array(
-        'router' => array(
-            'routes' => array()
+            __DIR__ . '/../../view',
+            __DIR__ . '/../view',
         ),
     ),
-    'control_permission'    => array(
-        //'authentication_route'  => 'auth/login',
-    )
 );

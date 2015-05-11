@@ -7,6 +7,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Adapter\Adapter;
+use Zend\Http\Header\HeaderInterface;
 
 class Store
 {
@@ -140,7 +141,7 @@ class Store
     protected function getRange()
     {
         $header = $this->request->getHeader('Range');
-        if (null !== $header) {
+        if ($header instanceof HeaderInterface) {
             if (preg_match('`items=([0-9]+)-([0-9]+)`', $header->getFieldValue(), $matches)) {
                 return array($matches[1], $matches[2]);
             }

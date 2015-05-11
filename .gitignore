@@ -10,3 +10,4 @@
 !/test/README
 /view/*
 !/view/README
+!/view/spork-tools/

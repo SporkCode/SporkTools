@@ -4,7 +4,7 @@ namespace SporkTools\Core\Access;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AccessFactory implements FactoryInterface
+class ServiceFactory implements FactoryInterface
 {
     const CONFIG = 'sporktools-access';
     

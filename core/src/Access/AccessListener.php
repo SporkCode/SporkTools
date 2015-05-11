@@ -39,8 +39,8 @@ class AccessListener extends AbstractListenerAggregate
     {
         $response = $event->getResponse();
         $services = $event->getApplication()->getServiceManager();
-        if ($services->has(AccessFactory::SERVICE)) {
-            $authorize = $services->get(AccessFactory::SERVICE);
+        if ($services->has(ServiceFactory::SERVICE)) {
+            $authorize = $services->get(ServiceFactory::SERVICE);
             if (!$authorize instanceof AbstractAccess) {
                 throw new \Exception('Authorize Service must implement of SporkTools\Core\Access\AbstractAccess');
             }
@@ -83,7 +83,7 @@ class AccessListener extends AbstractListenerAggregate
         $viewModel = $event->getViewModel();
         if ($viewModel instanceof ViewModel 
                 && $viewModel->getTemplate() == 'layout/layout') {
-            $access = $event->getApplication()->getServiceManager()->get(AccessFactory::SERVICE);
+            $access = $event->getApplication()->getServiceManager()->get(ServiceFactory::SERVICE);
             if ($access->isAuthorized()) {
                 $viewModel = new ViewModel();
                 $viewModel->setTemplate('spork-tools/footer');
