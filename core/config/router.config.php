@@ -2,10 +2,10 @@
 return array(
     'controllers' => array(
         'invokables' => array(
-            'SporkTools\Core\Controller\Index'  => 'SporkTools\Core\Controller\IndexController',
-            'SporkTools\Core\Controller\Log'    => 'SporkTools\Core\Controller\LogController',
-            'SporkTools\Core\Controller\Job'    => 'SporkTools\Core\Controller\JobController',
-            'SporkTools\Core\Controller\Test'   => 'SporkTools\Core\Controller\TestController',
+            'SporkTools\Core\Index' => 'SporkTools\Core\Controller\IndexController',
+            'SporkTools\Core\Log'    => 'SporkTools\Core\Controller\LogController',
+            'SporkTools\Core\Job'    => 'SporkTools\Core\Controller\JobController',
+            'SporkTools\Core\Test'   => 'SporkTools\Core\Controller\TestController',
         ),
     ),
     'router'        => array(
@@ -15,7 +15,8 @@ return array(
                 'options'       => array(
                     'route'         => '/sporktools',
                     'defaults'      => array(
-                        'controller'    => 'SporkTools\Core\Controller\Index',
+                        '__NAMESPACE__' => 'SporkTools',
+                        'controller'    => 'Core\Index',
                         'action'        => 'index',
                     ),
                     'constraints'   => array(
@@ -28,6 +29,15 @@ return array(
                         'type' => 'segment',
                         'options' => array(
                             'route' => '/:controller/:action'
+                        )
+                    ),
+                    'style' => array(
+                        'type' => 'literal',
+                        'options' => array(
+                            'route' => '/style',
+                            'defaults' => array(
+                                'action' => 'style',
+                            )
                         )
                     ),
                     'info'          => array(
@@ -62,7 +72,7 @@ return array(
                         'options'       => array(
                             'route'         => '/job',
                             'defaults'      => array(
-                                'controller'    => 'SporkTools\Core\Controller\Job',
+                                'controller'    => 'SporkTools\Core\Job',
                             )
                         ),
                         'may_terminate' => true,
@@ -122,7 +132,7 @@ return array(
                         'options'       => array(
                             'route'         => '/log',
                             'defaults'      => array(
-                                'controller'    => 'SporkTools\Core\Controller\Log',
+                                'controller'    => 'SporkTools\Core\Log',
                             ),
                         ),
                         'may_terminate' => true,
@@ -161,7 +171,7 @@ return array(
                         'options'       => array(
                             'route'         => '/test',
                             'defaults'      => array(
-                                'controller'    => 'SporkTools\Core\Controller\Test',
+                                'controller'    => 'SporkTools\Core\Test',
                             ),
                         ),
                         'may_terminate' => false,

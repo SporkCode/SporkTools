@@ -21,8 +21,8 @@ class ScheduleListener extends AbstractListenerAggregate
     public function run(MvcEvent $event)
     {
         $serviceManager = $event->getApplication()->getServiceManager();
-        if ($serviceManager->has(ServiceFactory::MANAGER)) {
-            $jobManager = $serviceManager->get(ServiceFactory::MANAGER);
+        if ($serviceManager->has(ServiceFactory::SERVICE)) {
+            $jobManager = $serviceManager->get(ServiceFactory::SERVICE);
             foreach ($jobManager->getJobs() as $job) {
                 $schedule = $job->getSchedule();
                 $lastScheduledRun = $schedule->getLast();

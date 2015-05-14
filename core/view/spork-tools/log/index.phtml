@@ -1,18 +1,23 @@
-<?php 
+<?php
+if (!$isConfigured):
+?>
+<h1>Log is not configured</h1>
+<?php
+return;
+endif;
+
 $this->headLink()->appendStylesheet('/js/dgrid/css/skins/claro.css');
 ?>
 <script>
 require(["dojo/store/JsonRest", "dgrid/OnDemandGrid", "dojo/domReady!"], 
         function(JsonRestStore, OnDemandGrid) {
-    var logStore = new JsonRestStore({target: '<?php echo $this->url('spork-tools/log/store') ?>'});
-    var grid = new OnDemandGrid({
-        store       : logStore,
-        columns: {
-            timestamp        : "Date Time",
-            priorityName     : "Priority",
-            message      : "Message",
-        }
-    }, 'logGrid');
+    var logStore = new JsonRestStore({
+        target: '<?php echo $this->url('spork-tools/log/store') ?>',
+        sortParam: 'sort'});
+    var grid = new OnDemandGrid({}, 'logGrid');
+    grid.set('subRows', <?php echo json_encode($subRows)?>);
+    grid.set('sort', '<?php echo $this->escapeJs($sortProperty) ?>', <?php echo $sortDescending ? 'true' : 'false'?>); 
+    grid.set('store', logStore);
     grid.startup();
 });
 </script>

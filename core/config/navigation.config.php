@@ -14,7 +14,8 @@ return array(
             ),
             array(
                 'label'     => 'Info',
-                'uri'       => '#',
+                'type' => 'uri',
+                //'uri'       => '#',
                 'pages'     => array(
                     array(
                         'label'     => 'PHP',
@@ -32,7 +33,8 @@ return array(
             ),
             array(
                 'label'     => 'Tests',
-                'uri'       => '#',
+                'type' => 'uri',
+                //'uri'       => '#',
                 'pages'     => array(
                     array(
                         'label'     => 'Error',

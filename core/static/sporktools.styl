@@ -1,47 +1,69 @@
-ul.navigation {
-    margin: 0;
-    border: 2px solid #7799BB;
-    border-radius: 8px;
+ul.sporktools.navigation
+    margin: .5em 0;
+    border: 0;
     padding: 0;
-    background-image: linear-gradient(to bottom, #99BBDD, #557799);
+    color: #333333;
+    background-color: #cccccc;
+    background: linear-gradient(to bottom, #eeeeee, #cccccc 25%, #bbbbbb 75%, #999999);
     display: inline-block;
     list-style: none;
+    font-size: 110%;
     
-    > li {
+    > li
         display: inline-block;
-        //border-width: 1px;
-        //border-style: none solid;
-        //border-color: #99BBDD #99BBDD #557799 #557799;
-    }    
+        border-width: 1px;
+        border-style: none solid;
+        border-color: #eeeeee #eeeeee #aaaaaa #aaaaaa;
+        
+        &:hover
+            background-color: #bbbbbb;
+            border-color: #666666;
     
-    li {
+    li
         position: relative;
-        padding: .25em 2ex;
+        padding: 0 2ex;
+        line-height: 165%;
     
-        &:hover {
-            ul {
+        &:hover
+            ul
                 display: block;
-            }
-        }
+            
         
-        a {
-            color: #0000FF;
+        
+        a
+            display: block;
+            color: inherit;
             font-weight: bold;
-        }
+            
+            &:hover
+                color: #3566A5;
         
-        ul {
-            margin: .25em 0 0 0;
+        
+        ul
+            margin: 0;
+            border: 0;
             padding: 0;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, .5);
             list-style: none;
             display: none;
             position: absolute;
-            left: 0;
-            background-color: #7799BB;
+            left: -2px;
+            background-color: #cccccc;
             z-index: 1000;
             
-            li {
-                //padding: .25em 0;
-            }    
-        }
-    } 
-}
+            li
+                border-width: 1px;
+                border-style: solid;
+                border-color: #dddddd #888888 #bbbbbb #888888;
+                
+                &:first-child
+                    border-top-style: none;
+                    
+                &:last-child
+                    border-bottom-color: #888888;
+                
+                &:hover
+                    background-color: #bbbbbb;
+                
+        
+     

@@ -2,13 +2,21 @@
 namespace SporkTools\Core\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Http\Header\ContentType;
+use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
     public function eventsAction()
     {
-        return array('events', $this->getEventManager());
+        $applicationEvents = $this->getEvent()->getApplication()->getEventManager(); 
+        $moduleEvents = $this->getServiceLocator()->get('moduleManager')->getEventManager();
+        return new ViewModel(array('eventManagers' => array(
+            $moduleEvents,
+            $applicationEvents,
+        )));
         
+        /*
         $mapper = new \SporkTools\Core\EventManager\Mapper("Application Events",
             $this->getEvent()->getApplication()->getEventManager());
         
@@ -24,6 +32,7 @@ class IndexController extends AbstractActionController
         }
         
         return array('eventMap' => $mapper);
+        */
     }
     
     public function phpInfoAction()
@@ -57,6 +66,11 @@ class IndexController extends AbstractActionController
     
     public function styleAction()
     {
-        $this->response->setContent(file_get_contents(__DIR__ . '/../../static/sporktools.css'));
+        $this->back()->ignore(true);
+        
+        $response = $this->response;
+        $response->getHeaders()->addHeader(new ContentType('text/css'));
+        $response->setContent(file_get_contents(__DIR__ . '/../../static/sporktools.css'));
+        return $response;
     }
 }

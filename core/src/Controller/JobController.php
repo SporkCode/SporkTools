@@ -113,6 +113,6 @@ class JobController extends AbstractActionController
      */
     protected function getJobManager()
     {
-        return $this->serviceLocator->get(Job\ServiceFactory::MANAGER);
+        return $this->serviceLocator->get(Job\ServiceFactory::SERVICE);
     }
 }

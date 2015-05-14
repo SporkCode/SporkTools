@@ -1,33 +1,63 @@
-ul.navigation {
-  margin: 0;
-  border: 2px solid #79b;
-  border-radius: 8px;
+ul.sporktools.navigation {
+  margin: 0.5em 0;
+  border: 0;
   padding: 0;
-  background-image: linear-gradient(to bottom, #9bd, #579);
+  color: #333;
+  background-color: #ccc;
+  background: linear-gradient(to bottom, #eee, #ccc 25%, #bbb 75%, #999);
   display: inline-block;
   list-style: none;
+  font-size: 110%;
 }
-ul.navigation > li {
+ul.sporktools.navigation > li {
   display: inline-block;
+  border-width: 1px;
+  border-style: none solid;
+  border-color: #eee #eee #aaa #aaa;
 }
-ul.navigation li {
+ul.sporktools.navigation > li:hover {
+  background-color: #bbb;
+  border-color: #666;
+}
+ul.sporktools.navigation li {
   position: relative;
-  padding: 0.25em 2ex;
+  padding: 0 2ex;
+  line-height: 165%;
 }
-ul.navigation li:hover ul {
+ul.sporktools.navigation li:hover ul {
   display: block;
 }
-ul.navigation li a {
-  color: #00f;
+ul.sporktools.navigation li a {
+  display: block;
+  color: inherit;
   font-weight: bold;
 }
-ul.navigation li ul {
-  margin: 0.25em 0 0 0;
+ul.sporktools.navigation li a:hover {
+  color: #3566a5;
+}
+ul.sporktools.navigation li ul {
+  margin: 0;
+  border: 0;
   padding: 0;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
   list-style: none;
   display: none;
   position: absolute;
-  left: 0;
-  background-color: #79b;
+  left: -2px;
+  background-color: #ccc;
   z-index: 1000;
+}
+ul.sporktools.navigation li ul li {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ddd #888 #bbb #888;
+}
+ul.sporktools.navigation li ul li:first-child {
+  border-top-style: none;
+}
+ul.sporktools.navigation li ul li:last-child {
+  border-bottom-color: #888;
+}
+ul.sporktools.navigation li ul li:hover {
+  background-color: #bbb;
 }

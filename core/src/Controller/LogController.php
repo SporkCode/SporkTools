@@ -1,10 +1,14 @@
 <?php
 namespace SporkTools\Core\Controller;
 
+use SporkTools\Core\Store\Store;
+use SporkTools\Core\Config\ServiceFactory as ConfigServiceFactory;
+
+use Zend\Config\Config;
+use Zend\Db\TableGateway\TableGatewayInterface;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use SporkTools\Core\Store\Store;
-use Zend\Db\TableGateway\TableGatewayInterface;
 
 /**
  * SporkTools\Core\Controller$LogController
@@ -12,18 +16,56 @@ use Zend\Db\TableGateway\TableGatewayInterface;
  */
 class LogController extends AbstractActionController
 {
-    const LOG_TABLE_SERVICE = 'SporkToolsLogTable';
-    
     public function indexAction()
     {
-        return array();
+        $table = $this->getLogTable();
+        $config = $this->getConfig();
+        
+        $subRows = array(array(), array());
+        $columns = $config->get('columns', array(
+            'timestamp' => 'Date Time',
+            'priorityName' => 'Priority',
+        ));
+        foreach ($columns as $field => $label) {
+            $subRows[1][] = array('field' => $field, 'label' => $label);
+        }
+        $subRows[0][] = array(
+            'field' => $config->get('messageColumn', 'message'), 
+            'label' => 'Message',
+            'colSpan' => count($columns),
+        );
+        
+//        $messageRow = array()
+//         $columns = array();
+//         foreach ($config->get('columns'))
+//         $columns = $config->get('columns', new Config(array(
+//             'timestamp' => 'Date Time',
+//             'priorityName' => 'Priority',
+//         )))->toArray();
+        
+        $sort = $config->get('sort', '-timestamp');
+        preg_match('`^(\+|-)?(.*)$`', $sort, $parts);
+        $property = $parts[2];
+        $descending = $parts[1] == '-';
+        //$sort = array('property' => $property, 'descending' => $descending);
+        
+        return array(
+            'isConfigured' => $table instanceof TableGatewayInterface,
+            'subRows' => $subRows,
+            'sortProperty' => $property,
+            'sortDescending' => $descending,
+        );
     }
     
     public function storeAction()
     {
         $logTable = $this->getLogTable();
         $store = new Store($logTable, $this->request, $this->response);
-        //$store->setOrder('id desc');
+        $sort = $this->request->getQuery('sort');
+        if (null !== $sort) {
+            preg_match('`^( |-)?(.+)$`', $sort, $parts);
+            $store->setOrder($parts[2] . ' ' . ($parts[1] == '-' ? 'desc' : 'asc'));
+        }
         return new JsonModel($store->getData());
     }
     
@@ -32,18 +74,30 @@ class LogController extends AbstractActionController
      */
     protected function getLogTable()
     {
-        $services = $this->getServiceLocator();
+        $config = $this->getConfig();
         
-        if (!$services->has(self::LOG_TABLE_SERVICE)) {
-            throw new \Exception('Log Table Service not found');
+        if ($config->offsetExists('table')) {
+            $services = $this->getServiceLocator();
+            $adapterName = $config->get('dbAdapter', 'db');
+            if (!$services->has($adapterName)) {
+                throw new \Exception('Database adapter service not found');
+            }
+            $adapter = $services->get($adapterName);
+            $table = new TableGateway($config['table'], $adapter);
+            return $table;
         }
-        
-        $table = $services->get(self::LOG_TABLE_SERVICE);
-        
-        if (!$table instanceof TableGatewayInterface) {
-            throw new \Exception("Log Table must implement Zend\Db\TableGateway\TableGatewayInterface");
-        }
-        
-        return $table;
+
+        return false;
+    }
+    
+    /**
+     * @return \Zend\Config\Config
+     */
+    protected function getConfig()
+    {
+        return $this
+                ->getServiceLocator()
+                ->get(ConfigServiceFactory::SERVICE)
+                ->get('log');
     }
 }

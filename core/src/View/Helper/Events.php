@@ -1,183 +1,406 @@
 <?php
 namespace SporkTools\Core\View\Helper;
 
-use SporkTools\Core\Controller\IndexController;
-
 use Zend\View\Helper\AbstractHelper;
 use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\Mvc\Controller\AbstractController;
+use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\CallbackHandler;
 use Zend\Stdlib\PriorityQueue;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+class Controller extends AbstractController
+{
+    public function onDispatch(MvcEvent $event) {
+    }
+}
 
 class Events extends AbstractHelper
 {
-    protected $triggerMap = array(
-        'Zend\Mvc\DispatchListener::onDispatch' => 'renderControllerEvents',
+    protected $renderCss = true;
+    
+    /**
+     * @var \Zend\View\Helper\EscapeHtml
+     */
+    protected $escape;
+    
+    protected $profiles = array(
+        'application' => array(
+            'name' => 'Application Events',
+            'identifiers' => array(
+                'Zend\Mvc\Application',
+            ),
+            'events' => array(
+                'bootstrap',
+                'route',
+                'dispatch',
+                'dispatch.error',
+                'render',
+                'render.error',
+                'finish',
+            ),
+            'map' => array(
+                'Zend\Mvc\DispatchListener::onDispatch' 
+                        => array('class' => __NAMESPACE__ . '\\Controller'),
+                'Zend\Mvc\View\Http\DefaultRenderingStrategy::render' 
+                        => array('service' => 'View'),
+                'Zend\Mvc\SendResponseListener::sendResponse'
+                        => array('service' => 'SendResponseListener'),
+            ),
+        ),
+        'controller' => array(
+            'name' => 'Controller Events',
+            'identifiers' => array(
+                'Zend\Mvc\Controller\AbstractController',
+            ),
+        ),
+        'view' => array(
+            'name' => 'View Events',
+            'identifiers' => array(
+                'Zend\View\View',
+            ),
+        ),
+        'response' => array(
+            'name' => 'Response Events',
+            'identifiers' => array(
+                'Zend\Mvc\SendResponseListener',
+            ),
+        ),
+        'module' => array(
+            'name' => 'Module Events',
+            'identifiers' => array(
+                'Zend\ModuleManager\ModuleManager',
+            ),
+            'events' => array(
+                'loadModules',
+                'loadModules.post',
+            ),
+            'map' => array(
+                'Zend\ModuleManager\ModuleManager::onLoadModules' 
+                        => array('profile' => 'loadModule'),
+                'Zend\ModuleManager\Listener\ConfigListener::onLoadModules' 
+                        => array('profile' => 'configureModules')
+            )
+        ),
+        'loadModule' => array(
+            'name' => 'Load Module',
+            'events' => array(
+                'loadModule.resolve',
+                'loadModule',
+            )
+        ),
+        'configureModules' => array(
+            'name' => 'Configure Modules',
+            'events' => array('mergeConfig'),
+        )
     );
     
-    public function __invoke(EventManagerInterface $events, $name = 'Application Events')
+    public function __invoke(EventManagerInterface $eventManager, $profile = null, $renderCss = null)
     {
-        $sharedEvents = $events->getSharedManager();
-        $identifiers = $events->getIdentifiers();
-        
-        $eventsHtml = '';
-        foreach ($this->sortEvents($events->getEvents()) as $event) {
-            // get listeners
-            $listeners = new PriorityQueue();
-            foreach ($events->getListeners($event) as $listener) {
-                $priority = $this->getPriority($listener);
-                $class = $this->getClass($listener);
-                $method = $this->getMethod($listener);
-                $listeners->insert(array(
-                    'priority' => $priority,
-                    'class' => $class,
-                    'method' => $method,
-                    'identifier' => '*',
-                ), $priority);
-            }
-            foreach ($identifiers as $identifier) {
-                $sharedListeners = $sharedEvents->getListeners($identifier, $event); 
-                if ($sharedListeners) {
-                    foreach ($sharedListeners as $sharedListener) {
-                        $priority = $this->getPriority($sharedListener);
-                        $class = $this->getClass($listener);
-                        $method = $this->getMethod($listener);
-                        $listeners->insert(array(
-                            'priority' => $priority,
-                            'class' => $class,
-                            'method' => $method,
-                            'identifier' => $identifier,
-                        ), $priority);
-                    }
-                }
-            }
-            
-            // render listeners
-            $listenersHtml = '';
-            foreach ($listeners as $listener) {
-                extract($listener);
-                $key = $class . '::' . $method;
-                if (array_key_exists($key, $this->triggerMap)) {
-                    $eventsHtml = call_user_func(array($this, $this->triggerMap[$key]));
-                } else {
-                    $eventsHtml = '';
-                }
-                $listenersHtml .= $this->renderListener(
-                    $class, 
-                    $method, 
-                    $priority,
-                    $identifier,
-                    $eventsHtml);
-            }
-            
-            // render event
-            $eventsHtml .= $this->renderEvent($event, $listenersHtml);
+        if ($renderCss === true || ($renderCss !== false && $this->renderCss == true)) {
+            $this->renderCss();
+            $this->renderCss = false;
         }
         
-        $html = $this->renderEvents($name, $identifiers, $eventsHtml);
+        $profile = $this->getProfile($eventManager, $profile);
+        //$sharedEvents = $eventManager->getSharedManager();
+
+        $html = '';
+        foreach ($profile['events'] as $event) {
+            $html .= $this->renderEvent($event, $eventManager, $profile);
+        }
+        
+        $identifiers = $eventManager->getIdentifiers();
+        
+        $html = <<<HDOC
+<h1 class="eventManager">{$this->escape($profile['name'])}
+    <span class="identifiers">({$this->escape(implode(', ', $identifiers))})</span>
+</h1>
+<ol class="events">$html</ol>
+HDOC;
+        
         return $html;
     }
-
-    protected function getClass(CallbackHandler $listener)
+    
+    protected function escape($value)
     {
+        if (null === $this->escape) {
+            $this->escape = $this->getView()->plugin('escapeHtml');
+        }
+        
+        $escape = $this->escape;
+        return $escape($value);
+    }
+    
+    protected function getListenerInfo(CallbackHandler $listener, $identifier = '*')
+    {
+        $info = array(
+            'class' => 'Unknown class',
+            'method' => 'Unknown method',
+            'identifier' => $identifier);
+        
+        $priority = $listener->getMetadatum('priority');
+        if (null === $priority) {
+            $priority = 1;
+        } elseif (is_array($priority)) {
+            $priority = array_shift($priority);
+        }
+        $info['priority'] = $priority;
+        
         $callback = $listener->getCallback();
-        if ($callback instanceof \Closure) {
+        if (is_array($callback)) {
+            $info['class'] = is_object($callback[0]) ? get_class($callback[0]) : $callback[0];
+            $info['method'] = $callback[1];
+        } elseif ($callback instanceof \Closure) {
             $closureRef = new \ReflectionFunction($callback);
             if (method_exists($closureRef, 'getClosureThis')) {
-                return get_class($closureRef->getClosureThis());
+                $info['class'] = get_class($closureRef->getClosureThis());
+            } else {
+                $info['class'] = $closureRef->getName();
             }
-            return $closureRef->getName();
+            $info['method'] = 'CLOSURE';
+        } elseif (is_object($callback)) {
+            $info['class'] = get_class($callback);
+            $info['method'] = 'INVOKABLE';
         }
-        return get_class($callback[0]);
-    }
-
-    protected function getMethod(CallbackHandler $listener)
-    {
-        $callback = $listener->getCallback();
-        if ($callback instanceof \Closure) {
-            return 'CLOSURE';
-        }
-        return $callback[1];
+        
+        return $info;
     }
     
-    protected function getPriority(CallbackHandler $listener) 
+    protected function getProfile(EventManagerInterface $eventManager, $profile = null)
     {
-        $priority = $listener->getMetadatum('priority');
-        
-        if (null === $priority) {
-            return 1;
+        $profiles = $this->profiles;
+        if (null === $profile) {
+            $profile = $this->searchProfiles($eventManager->getIdentifiers());
+        } elseif (is_scalar($profile)) {
+            if (!array_key_exists($profile, $profiles)) {
+                throw new \Exception("Profile '$profile' not found");
+            }
+            $profile = $profiles[$profile];
         }
         
-        if (is_array($priority)) {
-            return array_shift($priority);
+        $profile = array_merge(array(
+            'name' => 'Event Manager',
+            'identifiers' => array(),
+            'events' => array(),
+            'map' => array(),
+        ), $profile);
+        
+        if (empty($profile['events'])) {
+            $profile['events'] = $eventManager->getEvents();
         }
         
-        return $priority;
+        return $profile;
     }
     
-    protected function renderEvents($name, array $identifiers, $events)
+    /**
+     * @return \Zend\ServiceManager\ServiceLocatorInterface 
+     */
+    protected function getServices()
     {
-        $escape = $this->getView()->plugin('escapeHtml');
+        return $this->getView()->getHelperPluginManager()->getServiceLocator();
+    }
+    
+    protected function renderEvent($name, EventManagerInterface $eventManager, $profile)
+    {
+        $listeners = new PriorityQueue();
+        foreach ($eventManager->getListeners($name) as $listener) {
+            $info = $this->getListenerInfo($listener);
+            $listeners->insert($info, $info['priority']);
+        }
+        $sharedEvents = $eventManager->getSharedManager();
+        foreach ($eventManager->getIdentifiers() as $identifier) {
+            $sharedListeners = $sharedEvents->getListeners($identifier, $name); 
+            if ($sharedListeners) {
+                foreach ($sharedListeners as $sharedListener) {
+                    $info = $this->getListenerInfo($sharedListener, $identifier);
+                    $listeners->insert($info, $info['priority']);
+                }
+            }
+        }
+        
+        $html = '';
+        
+        foreach ($listeners as $listener) {
+            $html .= $this->renderListener($listener, $eventManager, $profile);
+        }
+        
         $html = <<<HDOC
-<h1 class="eventManager">{$escape($name)}
-    <span class="identifiers">({$escape(implode(', ', $identifiers))})</span>
-    <ol class="events">$events</ol>
-</h1>
+<li><span class="name">{$this->escape($name)}</span>
+    <ol class="listeners">$html</ol></li>
 HDOC;
+                
         return $html;
     }
     
-    protected function renderEvent($name, $listeners)
+    protected function renderListener(array $listener, EventManagerInterface $eventManager, $profile)
     {
-        $escape = $this->getView()->plugin('escapeHtml');
-        $html = <<<HDOC
-<li><span class="name">{$escape($name)}</span>
-    <ol class="listeners">$listeners</ol>
-</li>        
-HDOC;
-        return $html;
-    }
-    
-    protected function renderListener($class, $method, $priority, $identifier, $events)
-    {
-        $escape = $this->getView()->plugin('escapeHtml');
+        extract($listener);
+        $html = $this->renderChildEvents($listener, $profile['map'], $eventManager);
         $html = <<<HDOC
 <li>
-    <span class="class">{$escape($class)}</span> ::
-    <span class="method">{$escape($method)}</span>
+    <span class="class">{$this->escape($class)}</span> ::
+    <span class="method">{$this->escape($method)}</span>
     <dl>
         <dt class="priority">Priority</dt>
-        <dd class="priority">{$escape($priority)}</dd>
+        <dd class="priority">{$this->escape($priority)}</dd>
         <dt class="identifier">Identifier</dt>
-        <dd class="identifier">{$escape($identifier)}</dd>
+        <dd class="identifier">{$this->escape($identifier)}</dd>
     </dl>
-    $events
+    $html
 </li>
 HDOC;
         return $html;
     }
     
-    protected function renderControllerEvents()
+    protected function renderChildEvents(array $listener, array $map, EventManagerInterface $eventManager)
     {
-        $controller = new IndexController();
-        $events = $controller->getEventManager();
-        return $this($events, 'Controller Events');
+        $key = $listener['class'] . '::' . $listener['method'];
+        if (!array_key_exists($key, $map)) {
+            return '';
+        }
+        
+        $path = $map[$key];
+        
+        $profile = isset($path['profile']) ? $path['profile'] : null;
+        
+        if (array_key_exists('class', $path)) {
+            $instance = new $path['class']();
+        }
+        
+        if (array_key_exists('service', $path)) {
+            $instance = $this->getServices()->get($path['service']);
+        }
+
+        if (isset($instance)) {
+            if ($instance instanceof EventManagerAwareInterface) {
+                $instance = $instance->getEventManager();
+            }
+            if (!$instance instanceof EventManagerInterface) {
+                throw new \Exception('Could not resolve event manager');
+            }
+            $eventManager = $instance;
+        } elseif (null === $profile) {
+            throw new \Exception('Could not resolve event map');
+        }
+        return $this($eventManager, $profile);
     }
     
-    protected function sortEvents($events)
+    protected function renderCss()
     {
-        $order = array(
-            'bootstrap',
-            'route',
-            'dispatch',
-            'dispatch.error',
-            'render',
-            'render.error',
-            'finish',
-        );
-        usort($events, function($a, $b) use ($order) {
-            return array_search($a, $order) - array_search($b, $order);
-        });
-        return $events;
+        echo <<<CSS
+<style>
+h1.eventManager {
+    border-radius: 14px 14px 0 0;
+    padding: .6em 1ex .2em 1ex;
+    margin: 1em 0 0 0;
+    
+    color: #444444;
+    background-color: #CCCCCC;
+    
+    font-size: 200%;
+    line-height: 50%;
+}
+
+h1.eventManager .identifiers {
+    font-size: 50%;
+}
+
+ol.events {
+    padding: 0;
+    margin: 0;
+    
+    list-style-position: inside;
+
+}
+
+ol.events > li {
+    margin: 0;
+    padding: .25em 1ex;
+    
+    color: #444444;
+    background-color: #CCCCCC;
+    
+    font-size: 166%;
+    font-weight: 700;
+}
+            
+ol.events > li:last-child {
+    border-radius: 0 0 14px 14px;
+    margin: 0 0 .5em 0;
+}
+
+ol.events > li > span.name {
+    display: inline-block;
+    margin: 2px 0;    
+    border-radius: 14px;
+    padding: 3px 2ex;
+    
+    color: #CCCCCC;
+    background-color: #444444;
+            
+    font-size: 75%;
+    vertical-align: text-bottom;
+}
+
+ol.listeners {
+    padding-left: 8ex;
+    list-style-position: outside;
+
+    font-size: 60.241%;
+    font-weight: normal;
+}
+
+ol.listeners > li {
+    margin: .25em 0;
+    border-radius: 14px;
+    border: 2px solid #CCCCCC;
+    padding: .25em 2ex;
+    
+    background-color: #EEEEEE;
+}
+
+ol.listeners > li span.class {
+    font-weight: bold;
+}
+
+ol.listeners > li dl dt,
+ol.listeners > li dl dd {
+    display: inline-block;
+    padding: 0 1ex 0 0;
+    margin: 0;
+    
+    color: #666666;
+}
+
+ol.listeners li dl dt:AFTER {
+    content: ': ';
+}
+
+ol.listeners li dl dt {
+    font-weight: 700;
+}
+            
+ol.listeners > li h1.eventManager {
+    margin-top: .5em;
+}
+</style>
+CSS;
     }
     
+    protected function searchProfiles(array $identifiers)
+    {
+        foreach ($this->profiles as $profile) {
+            if (array_key_exists('identifiers', $profile)) {            
+                foreach ($profile['identifiers'] as $identifier) {
+                    if (!in_array($identifier, $identifiers)) {
+                        continue 2;
+                    }
+                }
+                return $profile;
+            }
+        }
+        return array();
+    }
 }

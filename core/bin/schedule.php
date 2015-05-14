@@ -84,11 +84,11 @@ $serviceManager = new ServiceManager($serviceManagerConfig);
 $serviceManager->setService('ApplicationConfig', $configuration);
 $serviceManager->get('ModuleManager')->loadModules();
 
-if (!$serviceManager->has(Job\ServiceFactory::MANAGER)) {
+if (!$serviceManager->has(Job\ServiceFactory::SERVICE)) {
     echo "Job manager not available from service manager" . PHP_EOL;
     exit(1);
 }
-$jobManager = $serviceManager->get(Job\ServiceFactory::MANAGER);
+$jobManager = $serviceManager->get(Job\ServiceFactory::SERVICE);
 if ($jobManager->hasFeature(FeatureInterface::REPORTING)) {
     foreach ($jobManager->getJobs() as $job) {
         $schedule = $job->getSchedule();

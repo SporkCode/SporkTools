@@ -58,7 +58,7 @@ class JobControllerTest extends TestCaseController
         $this->dispatch('edit');
         
         $this->assertResponseRedirect('/sporktools/job');
-        $job = $this->services->get(ServiceFactory::MANAGER)->getJob('foo');
+        $job = $this->services->get(ServiceFactory::SERVICE)->getJob('foo');
         $this->assertEquals('Bar Job', $job->getName());
     }
     
@@ -92,6 +92,6 @@ class JobControllerTest extends TestCaseController
     {
         parent::setUp();
         
-        $this->services->get(ServiceFactory::MANAGER)->addFeature(new JobLoader());
+        $this->services->get(ServiceFactory::SERVICE)->addFeature(new JobLoader());
     }
 }

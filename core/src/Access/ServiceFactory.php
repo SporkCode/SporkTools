@@ -1,13 +1,14 @@
 <?php
 namespace SporkTools\Core\Access;
 
+use SporkTools\Core\Config\ServiceFactory as ConfigServiceFactory;
+
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Config\Config;
 
 class ServiceFactory implements FactoryInterface
 {
-    const CONFIG = 'sporktools-access';
-    
     const SERVICE = 'SporkToolsAccess';
     
     protected $types = array(
@@ -18,14 +19,12 @@ class ServiceFactory implements FactoryInterface
     
     public function createService(ServiceLocatorInterface $services)
     {
-        $appConfig = $services->get('config');
-        $config = isset($appConfig[self::CONFIG])
-                ? (array) $appConfig[self::CONFIG] : array();
+        $config = $services->get(ConfigServiceFactory::SERVICE)->get('access');
         
-        if (isset($config['type'])) {
-            $key = strtolower($config['type']);
+        if ($config->offsetExists('type')) {
+            $key = strtolower($config->get('type'));
             $class = array_key_exists($key, $this->types) 
-                    ? $this->types[$key] : $config['type'];
+                    ? $this->types[$key] : $config->get('type');
             if (!class_exists($class)) {
                 throw new \Exception(sprintf("Invalid Access Service type (%s)", $class));
             }
@@ -42,6 +41,9 @@ class ServiceFactory implements FactoryInterface
         foreach ($config as $name => $value) {
             $method = 'set' . $name;
             if (method_exists($access, $method)) {
+                if ($value instanceof Config) {
+                    $value = $value->toArray();
+                }
                 call_user_func_array(array($access, $method), (array) $value);
             }
         }

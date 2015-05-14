@@ -1,2 +1,2 @@
-<?php echo $this->navigation('controlNavigation')->menu(); ?>
+<?php echo $this->tagTrim($this->navigation('controlNavigation')->menu()->setUlClass('sporktools navigation')); ?>
 <div id="moduleControl"><?php echo $content ?></div>

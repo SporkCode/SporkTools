@@ -10,8 +10,8 @@ class ServiceFactory extends \Zend\Navigation\Service\DefaultNavigationFactory
     {
         $pages = parent::createService($serviceLocator);
         
-        if ($serviceLocator->has(\SporkTools\Core\Job\ServiceFactory::MANAGER)) {
-            $jobManager = $serviceLocator->get(\SporkTools\Core\Job\ServiceFactory::MANAGER);
+        if ($serviceLocator->has(\SporkTools\Core\Job\ServiceFactory::SERVICE)) {
+            $jobManager = $serviceLocator->get(\SporkTools\Core\Job\ServiceFactory::SERVICE);
             if ($jobManager->hasFeature(FeatureInterface::ENABLED)) {
                 $page = $pages->findOneBy('route', 'sporktools/job');
                 if (null !== $page) {

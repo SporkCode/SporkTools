@@ -31,9 +31,6 @@ class Module
         
         $eventManager->attachAggregate(new AccessListener());
         $eventManager->attachAggregate(new Listener\InjectLayout());
-        
-        // $headLink = $serviceManager->get('viewHelperManager')->get('headLink');
-        // $headLink->appendStylesheet('/sporktools/style');
     }
 
     public function getConfig()

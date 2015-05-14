@@ -34,9 +34,14 @@ class InjectLayout extends AbstractListenerAggregate
             return;
         }
         
+        $event->getApplication()->getServiceManager()->get('viewHelperManager')
+                ->get('headLink')->appendStylesheet('/sporktools/style');
+        
         $layout = new ViewModel();
         $layout->setTemplate('spork-tools/layout');
         $layout->addChild($result);
         $event->setResult($layout);
+        
+
     }
 }
