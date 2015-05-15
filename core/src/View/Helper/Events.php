@@ -42,7 +42,7 @@ class Events extends AbstractHelper
             ),
             'map' => array(
                 'Zend\Mvc\DispatchListener::onDispatch' 
-                        => array('class' => __NAMESPACE__ . '\\Controller'),
+                        => array('class' => 'SporkTools\\Core\\View\\Helper\\Controller'),
                 'Zend\Mvc\View\Http\DefaultRenderingStrategy::render' 
                         => array('service' => 'View'),
                 'Zend\Mvc\SendResponseListener::sendResponse'
