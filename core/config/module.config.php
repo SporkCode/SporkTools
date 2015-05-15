@@ -6,13 +6,8 @@ use SporkTools\Core\Job\ServiceFactory as JobServiceFactory;
 return array(
     'sporktools' => array(
         'access' => array(),
+        'job' => array(),
         'log' => array(),
-    ),
-    'sporktools-log' => array(
-        'table' => null,
-        'dbAdapter' => 'db',
-        'columns' => array(
-        )
     ),
     'controller_plugins' => array(
         'invokables' => array(

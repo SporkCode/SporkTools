@@ -13,7 +13,7 @@ class ServiceFactory extends \Zend\Navigation\Service\DefaultNavigationFactory
         if ($serviceLocator->has(\SporkTools\Core\Job\ServiceFactory::SERVICE)) {
             $jobManager = $serviceLocator->get(\SporkTools\Core\Job\ServiceFactory::SERVICE);
             if ($jobManager->hasFeature(FeatureInterface::ENABLED)) {
-                $page = $pages->findOneBy('route', 'sporktools/job');
+                $page = $pages->findOneBy('route', 'spork-tools/job');
                 if (null !== $page) {
                     $page->setVisible(true);
                 }
