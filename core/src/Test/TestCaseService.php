@@ -3,5 +3,5 @@ namespace SporkTools\Core\Test;
 
 class TestCaseService extends \Spork\Test\TestCase\TestCaseService
 {
-    protected $configPath = 'core/test/application.config.php';
+    protected $configPath = __DIR__ . '/../../test/application.config.php';
 }

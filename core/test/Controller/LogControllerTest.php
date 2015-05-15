@@ -5,6 +5,7 @@ use SporkTools\Core\Test\TestCaseController;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use SporkTools\Core\Controller\LogController;
+use Spork\Log\ServiceFactory;
 
 class LogControllerTest extends TestCaseController
 {
@@ -26,8 +27,8 @@ CREATE TEMPORARY TABLE `log`(
     `extra` text NOT NULL)
 SQL;
         $db->query($sql, Adapter::QUERY_MODE_EXECUTE);
-        $table = new TableGateway('log', $db);
-        $this->services->setService(LogController::LOG_TABLE_SERVICE, $table);
+        //$table = new TableGateway('log', $db);
+        //$this->services->setService(ServiceF::LOG_TABLE_SERVICE, $table);
         
         $result = $this->dispatch('store');
         
@@ -36,6 +37,6 @@ SQL;
     
     protected function dispatch($action = null)
     {
-        parent::dispatch('SporkTools\Core\Controller\Log', $action);
+        parent::dispatch('SporkTools\Core\Log', $action);
     }
 }

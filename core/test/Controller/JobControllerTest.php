@@ -12,6 +12,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Http\Request;
+use SporkTools\Core\Job\Manager;
 
 class JobLoader extends AbstractListenerAggregate implements FeatureInterface
 {
@@ -85,13 +86,19 @@ class JobControllerTest extends TestCaseController
     
     protected function dispatch($action = null)
     {
-        parent::dispatch('SporkTools\Core\Controller\Job', $action);
+        parent::dispatch('SporkTools\Core\Job', $action);
     }
     
     protected function setUp()
     {
         parent::setUp();
         
-        $this->services->get(ServiceFactory::SERVICE)->addFeature(new JobLoader());
+        $jobManager = new Manager();
+        $jobManager->setServiceManager($this->services);
+        $jobManager->addFeature(new JobLoader());
+        $this->services
+            ->setAllowOverride(true)
+            ->setService(ServiceFactory::SERVICE, $jobManager)
+            ->setAllowOverride(false);
     }
 }

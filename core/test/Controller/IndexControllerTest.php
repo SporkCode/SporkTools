@@ -5,8 +5,6 @@ use SporkTools\Core\Test\TestCaseController;
 
 class IndexControllerTest extends TestCaseController
 {
-    protected $configPath = 'core/test/application.config.php';
-    
     public function testIndex()
     {
         $result = $this->dispatch('index');
@@ -39,6 +37,6 @@ class IndexControllerTest extends TestCaseController
     
     protected function dispatch($action = null)
     {
-        parent::dispatch('SporkTools\Core\Controller\Index', $action);
+        parent::dispatch('SporkTools\Core\Index', $action);
     }
 }

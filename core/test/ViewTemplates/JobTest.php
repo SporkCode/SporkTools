@@ -12,8 +12,12 @@ class JobTest extends TestCaseView
 {
     public function testIndex()
     {
+        $manager = $this->getMockBuilder('SporkTools\Core\Job\Manager')->getMock();
+        $manager->method('hasFeature')->willReturn(true);
+        //$manager = new Manager();
         $this->setVariables(array(
-            'manager' => new Manager(),
+            'manager' => $manager,
+            'jobs' => array(),
         ));
         $this->render('spork-tools/job/index');
     }

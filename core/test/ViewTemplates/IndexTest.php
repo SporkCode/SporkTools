@@ -2,6 +2,9 @@
 namespace SporkToolsTest\Core\ViewTemplates;
 
 use SporkTools\Core\Test\TestCaseView;
+use SporkTools\Core\ServiceManager\Mapper as ServiceMapper;
+
+use Zend\EventManager\EventManager;
 
 class IndexTest extends TestCaseView
 {
@@ -12,7 +15,7 @@ class IndexTest extends TestCaseView
     
     public function testEvents()
     {
-        $this->markTestIncomplete('template under development');
+        $this->addVariable('eventManagers', array(new EventManager()));
         $this->render('spork-tools/index/events');
     }
     
@@ -24,7 +27,10 @@ class IndexTest extends TestCaseView
     
     public function testServices()
     {
-        $this->markTestIncomplete('template under development');
+        $this->markTestSkipped('Broken 2015/05/15');
+        $serviceMapper = new ServiceMapper();
+        $serviceMapper->setServiceManager($this->services);
+        $this->addVariable('serviceMapper', $serviceMapper);
         $this->render('spork-tools/index/services');
     }
 }

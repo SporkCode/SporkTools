@@ -15,24 +15,6 @@ class IndexController extends AbstractActionController
             $moduleEvents,
             $applicationEvents,
         )));
-        
-        /*
-        $mapper = new \SporkTools\Core\EventManager\Mapper("Application Events",
-            $this->getEvent()->getApplication()->getEventManager());
-        
-        $events = $mapper->getEvents();
-        foreach ($events['dispatch'] as $listener) {
-            if ($listener['class'] == 'Zend\Mvc\DispatchListener' &&
-                    $listener['method'] == 'onDispatch') {
-                $events['dispatch']->remove($listener);
-                $listener['eventMap'] = new \SporkTools\Core\EventManager\Mapper(
-                    "Controller Events", $this->getEventManager()); 
-                $events['dispatch']->insert($listener, $listener['priority']);
-            }
-        }
-        
-        return array('eventMap' => $mapper);
-        */
     }
     
     public function phpInfoAction()
@@ -66,8 +48,6 @@ class IndexController extends AbstractActionController
     
     public function styleAction()
     {
-        $this->back()->ignore(true);
-        
         $response = $this->response;
         $response->getHeaders()->addHeader(new ContentType('text/css'));
         $response->setContent(file_get_contents(__DIR__ . '/../../static/sporktools.css'));

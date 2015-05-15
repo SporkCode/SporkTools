@@ -98,13 +98,7 @@ class Events extends AbstractHelper
     
     public function __invoke(EventManagerInterface $eventManager, $profile = null, $renderCss = null)
     {
-        if ($renderCss === true || ($renderCss !== false && $this->renderCss == true)) {
-            $this->renderCss();
-            $this->renderCss = false;
-        }
-        
         $profile = $this->getProfile($eventManager, $profile);
-        //$sharedEvents = $eventManager->getSharedManager();
 
         $html = '';
         foreach ($profile['events'] as $event) {
@@ -119,6 +113,11 @@ class Events extends AbstractHelper
 </h1>
 <ol class="events">$html</ol>
 HDOC;
+        
+        if ($renderCss === true || ($renderCss !== false && $this->renderCss == true)) {
+            $html .= $this->renderCss();
+            $this->renderCss = false;
+        }
         
         return $html;
     }
@@ -289,7 +288,7 @@ HDOC;
     
     protected function renderCss()
     {
-        echo <<<CSS
+        return <<<CSS
 <style>
 h1.eventManager {
     border-radius: 14px 14px 0 0;

@@ -13,7 +13,9 @@ class EventsTest extends TestCaseService
         $application = $this->services->get('application');
         $application->bootstrap();
         $events = new Events();
-        $events->setView(new PhpRenderer());
+        $renderer = new PhpRenderer();
+        $renderer->getHelperPluginManager()->setServiceLocator($this->services);
+        $events->setView($renderer);
         
         $eventManager = $application->getEventManager();
         $events($eventManager);
