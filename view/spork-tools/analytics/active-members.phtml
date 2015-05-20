@@ -1,0 +1,7 @@
+<h1>Active Members in 24 hour period</h1>
+<table>
+    <tr><th>Date</th><th>Active Members</th></tr>
+    <?php foreach ($data as $row): ?>
+    <tr><td><?php echo $this->escapeHtml($row['date']) ?></td><td><?php echo $this->escapeHtml($row['value']) ?></td>
+    <?php endforeach; ?>
+</table>

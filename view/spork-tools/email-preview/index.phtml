@@ -1,0 +1,29 @@
+<style>
+.body.text {
+    padding: 1em 2ex;
+    border: 1px solid white;
+    border-radius: 5px;
+    background-color: lightgray;
+    color: black;
+    font-family: initial;
+}
+</style>
+<h3>From</h3>
+<p>
+<?php echo $this->escapeHtml(implode(', ', array_map(
+    function($from) {return $from->toString();}, 
+    iterator_to_array($message->getFrom())))) ?>
+</p>
+
+<h3>To</h3>
+<p>
+<?php echo $this->escapeHtml(implode(', ', array_map(
+    function($to) {return $to->toString();}, 
+    iterator_to_array($message->getTo())))) ?>
+</p>
+
+<h3>Subject</h3>
+<p><?php echo $this->escapeHtml($message->getSubject()) ?></p>
+
+<h3>Text Body</h3>
+<pre class="body text"><?php echo $this->escapeHtml($message->getBody()) ?></pre>
