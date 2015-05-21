@@ -98,9 +98,10 @@ class Events extends AbstractHelper
     
     public function __invoke(EventManagerInterface $eventManager, $profile = null, $renderCss = null)
     {
+        $html = '';
+        
         $profile = $this->getProfile($eventManager, $profile);
 
-        $html = '';
         foreach ($profile['events'] as $event) {
             $html .= $this->renderEvent($event, $eventManager, $profile);
         }
@@ -113,7 +114,7 @@ class Events extends AbstractHelper
 </h1>
 <ol class="events">$html</ol>
 HDOC;
-        
+
         if ($renderCss === true || ($renderCss !== false && $this->renderCss == true)) {
             $html .= $this->renderCss();
             $this->renderCss = false;
@@ -283,7 +284,7 @@ HDOC;
         } elseif (null === $profile) {
             throw new \Exception('Could not resolve event map');
         }
-        return $this($eventManager, $profile);
+        return $this($eventManager, $profile, false);
     }
     
     protected function renderCss()
