@@ -23,7 +23,7 @@ abstract class AbstractJob extends AbstractBase
     {
         if (null === $this->report) {
             $event = new Event(Event::FETCH_REPORT, $this);
-            $responses = $this->getEventManager()->triggerUntil(
+            $responses = $this->getEventManager()->trigger(
                     $event, 
                     function ($response) {return null != $response;});
             $this->report = $responses->last();
@@ -35,7 +35,7 @@ abstract class AbstractJob extends AbstractBase
     {
         if (null === $this->schedule) {
             $event = new Event(Event::FETCH_SCHEDULE, $this);
-            $responses = $this->getEventManager()->triggerUntil(
+            $responses = $this->getEventManager()->trigger(
                     $event, 
                     function ($response) {return null != $response;});
             $this->schedule = $responses->last();
