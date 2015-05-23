@@ -94,7 +94,7 @@ class Manager implements EventManagerAwareInterface, ServiceManagerAwareInterfac
     {
         $eventManager = $this->getEventManager();
         $event = new Event(Event::HAS_FEATURE, $this, array('feature' => $name));
-        $responses = $eventManager->triggerUntil($event, function ($response) {return $response == true;});
+        $responses = $eventManager->trigger($event, function ($response) {return $response == true;});
         return $responses->last() == true;
     }
     
